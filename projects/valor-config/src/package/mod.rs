@@ -1,13 +1,17 @@
-use crate::ValorDependencies;
+use std::collections::BTreeMap;
 
-pub struct ValorPackage {
+use crate::ValorDependency;
+use serde::Deserialize;
+pub mod name;
+
+
+
+pub struct ValorConfig {
     pub name: String,
     pub version: String,
     pub description: String,
     pub authors: Vec<String>,
-    pub dependencies: Vec<ValorDependencies>,
-    pub dev_dependencies: Vec<ValorDependencies>,
-    pub build_dependencies: Vec<ValorDependencies>,
+    pub dependencies: BTreeMap<String, ValorDependency>,
     pub scripts: Vec<String>,
     pub files: Vec<String>,
     pub main: String,

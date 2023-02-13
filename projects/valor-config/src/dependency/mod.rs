@@ -1,11 +1,16 @@
+use serde_derive::Serialize;
+
+use crate::package::name::ValorPackageName;
+
 mod der;
 
-pub struct ValorDependencies {
-    pub name: String,
-    pub version: String,
-    pub path: String,
-    pub git: String,
-    pub branch: String,
-    pub tag: String,
-    pub registry: String,
+#[derive(Clone, Debug, Serialize)]
+pub struct ValorDependency {
+    name: ValorPackageName,
+    version: String,
+    path: String,
+    git: String,
+    branch: String,
+    tag: String,
+    registry: String,
 }
