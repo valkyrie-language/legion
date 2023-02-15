@@ -1,11 +1,12 @@
 pub use errors::{Error, Result};
 
-pub use crate::dependency::ValorDependency;
-pub use crate::package::name::ValorPackageName;
-pub use crate::package::ValorConfig;
+pub use crate::{
+    dependency::ValorDependency,
+    package::{name::PackageName, ValorConfig},
+};
 
 mod errors;
 
-mod package;
 mod dependency;
+mod package;
 mod workspace;

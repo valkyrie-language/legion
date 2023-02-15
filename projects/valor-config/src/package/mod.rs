@@ -1,23 +1,21 @@
-use std::collections::BTreeMap;
-use std::fmt::Formatter;
-use std::str::FromStr;
+use std::{collections::BTreeMap, fmt::Formatter, str::FromStr};
 
-use serde::de::{Error, MapAccess, Visitor};
-use serde::Deserialize;
-use serde::Deserializer;
-use valkyrie_errors::ValkyrieError;
+use serde::{
+    de::{Error, MapAccess, Visitor},
+    Deserialize, Deserializer,
+};
+use serde_derive::Serialize;
 
 use crate::ValorDependency;
 
+mod der;
 pub mod name;
 
-
+#[derive(Clone, Debug, Serialize)]
 pub struct ValorConfig {
-    pub name: String,
-    pub version: String,
     pub description: String,
     pub authors: Vec<String>,
-    pub dependencies: BTreeMap<String, ValorDependency>,
+    dependencies: BTreeMap<String, ValorDependency>,
     pub scripts: Vec<String>,
     pub files: Vec<String>,
     pub main: String,
@@ -28,4 +26,3 @@ pub struct ValorConfig {
     pub homepage: String,
     pub bugs: String,
 }
-

@@ -5,36 +5,36 @@ use super::*;
 
 // `@user/name`
 #[derive(Clone, Debug, Serialize)]
-pub struct ValorPackageName {
+pub struct PackageName {
     user: String,
     name: String,
 }
 
-impl Default for ValorPackageName {
+impl Default for PackageName {
     fn default() -> Self {
         Self { user: "".to_string(), name: "".to_string() }
     }
 }
 
-impl FromStr for ValorPackageName {
+impl FromStr for PackageName {
     type Err = SyntaxError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         parse_package_name(s).map_err(|e| SyntaxError::new(e))
     }
 }
 
-fn parse_package_name(s: &str) -> Result<ValorPackageName, String> {
+fn parse_package_name(s: &str) -> Result<PackageName, String> {
     let mut iter = s.split('@');
     let user = iter.next().unwrap_or("");
     let name = iter.next().unwrap_or("");
-    Ok(ValorPackageName { user: user.to_string(), name: name.to_string() })
+    Ok(PackageName { user: user.to_string(), name: name.to_string() })
 }
 
 pub struct PackageNameWriter<'a> {
-    ptr: &'a mut ValorPackageName,
+    ptr: &'a mut PackageName,
 }
 
-impl<'de> Deserialize<'de> for ValorPackageName {
+impl<'de> Deserialize<'de> for PackageName {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
