@@ -5,7 +5,7 @@ use serde::{
     Deserialize, Deserializer,
 };
 
-use crate::{ValorConfig, ValorDependency};
+use crate::{DependencyItem, ValorConfig};
 
 impl Default for ValorConfig {
     fn default() -> Self {
@@ -62,27 +62,7 @@ impl<'i, 'de> Visitor<'de> for ConfigWriter<'i> {
         A: MapAccess<'de>,
     {
         while let Some((key, value)) = map.next_entry::<String, String>()? {
-            match key.as_str() {
-                "description" => self.ptr.description = value,
-                "authors" => self.ptr.authors = value.split(',').map(|s| s.to_string()).collect(),
-                "dependencies" => {
-                    let mut deps = BTreeMap::new();
-                    for (key, value) in value.split(',').map(|s| s.split(':').collect::<Vec<&str>>()) {
-                        deps.insert(key.to_string(), ValorDependency::from_str(value).unwrap());
-                    }
-                    self.ptr.dependencies = deps;
-                }
-                "scripts" => self.ptr.scripts = value.split(',').map(|s| s.to_string()).collect(),
-                "files" => self.ptr.files = value.split(',').map(|s| s.to_string()).collect(),
-                "main" => self.ptr.main = value,
-                "bin" => self.ptr.bin = value.split(',').map(|s| s.to_string()).collect(),
-                "keywords" => self.ptr.keywords = value.split(',').map(|s| s.to_string()).collect(),
-                "license" => self.ptr.license = value,
-                "repository" => self.ptr.repository = value,
-                "homepage" => self.ptr.homepage = value,
-                "bugs" => self.ptr.bugs = value,
-                _ => {}
-            }
+            todo!()
         }
         Ok(())
     }

@@ -1,5 +1,3 @@
-use serde_derive::Serialize;
-use valkyrie_errors::SyntaxError;
 
 use super::*;
 
@@ -8,6 +6,16 @@ use super::*;
 pub struct PackageName {
     user: String,
     name: String,
+}
+
+impl Display for PackageName {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        if self.user.is_empty() {
+            f.write_str(&self.name)
+        } else {
+            f.write_str(&format!("@{}/{}", self.user, self.name))
+        }
+    }
 }
 
 impl Default for PackageName {

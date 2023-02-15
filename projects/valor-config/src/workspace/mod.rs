@@ -1,4 +1,4 @@
-use crate::ValorDependency;
+use crate::DependencyItem;
 
 use std::fmt::Formatter;
 
@@ -27,19 +27,18 @@ impl Default for Workspace {
     }
 }
 
-
 impl<'de> Deserialize<'de> for Workspace {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: Deserializer<'de>,
+    where
+        D: Deserializer<'de>,
     {
         let mut default = Workspace::default();
         Deserialize::deserialize_in_place(deserializer, &mut default)?;
         return Ok(default);
     }
     fn deserialize_in_place<D>(deserializer: D, place: &mut Self) -> Result<(), D::Error>
-        where
-            D: Deserializer<'de>,
+    where
+        D: Deserializer<'de>,
     {
         deserializer.deserialize_any(WorkspaceVisitor { body: place })
     }
@@ -56,8 +55,8 @@ impl<'de, 'body> Visitor<'de> for WorkspaceVisitor<'body> {
         formatter.write_str("Except Workspace object")
     }
     fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
-        where
-            A: MapAccess<'de>,
+    where
+        A: MapAccess<'de>,
     {
         while let Some(key) = map.next_key::<&str>()? {
             match key {

@@ -6,9 +6,9 @@ use serde::{
     Deserialize, Deserializer,
 };
 
-use crate::{PackageName, ValorDependency};
+use crate::{DependencyItem, PackageName};
 
-impl Default for ValorDependency {
+impl Default for DependencyItem {
     fn default() -> Self {
         Self {
             name: PackageName::default(),
@@ -23,10 +23,10 @@ impl Default for ValorDependency {
 }
 
 struct DependencyWriter<'i> {
-    ptr: &'i mut ValorDependency,
+    ptr: &'i mut DependencyItem,
 }
 
-impl<'de> Deserialize<'de> for ValorDependency {
+impl<'de> Deserialize<'de> for DependencyItem {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,

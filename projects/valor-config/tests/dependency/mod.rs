@@ -1,10 +1,10 @@
-use std::collections::BTreeMap;
-use valor_config::ValorDependency;
+use valor_config::ValorConfig;
 
 #[test]
 fn test() {
     let toml = r#"
+    [dependencies]
     name = "^1.0"
     "#;
-    println!("{:#?}", toml::from_str::<BTreeMap<String, ValorDependency>>(toml));
+    println!("{:#?}", toml::from_str::<ValorConfig>(toml));
 }

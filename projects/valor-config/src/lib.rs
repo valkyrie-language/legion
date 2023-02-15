@@ -1,7 +1,7 @@
 pub use errors::{Error, Result};
 
 pub use crate::{
-    dependency::ValorDependency,
+    dependency::{DependencyItem, DependencyResolver},
     package::{name::PackageName, ValorConfig},
 };
 
