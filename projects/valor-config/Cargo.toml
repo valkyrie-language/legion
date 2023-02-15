@@ -14,7 +14,10 @@ serde = "1.0.152"
 serde_derive = "1.0.152"
 serde-types = "0.1.1"
 config = "0.13.3"
-valkyrie-errors = "0.0.2"
+
+[dependencies.valkyrie-errors]
+path = "F:\\React\\valkyrie.rs\\projects\\valkyrie-errors"
+#version = "0.0.2"
 
 [dev-dependencies]
 
