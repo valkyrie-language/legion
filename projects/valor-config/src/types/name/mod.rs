@@ -1,21 +1,14 @@
+use std::hash::Hash;
 
 use super::*;
 
+// `name`
 // `@user/name`
-#[derive(Clone, Debug, Serialize)]
+// `@user/name-path`
+#[derive(Clone, Debug, Hash, Eq, PartialEq, Serialize)]
 pub struct PackageName {
     user: String,
     name: String,
-}
-
-impl Display for PackageName {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        if self.user.is_empty() {
-            f.write_str(&self.name)
-        } else {
-            f.write_str(&format!("@{}/{}", self.user, self.name))
-        }
-    }
 }
 
 impl Default for PackageName {
@@ -24,18 +17,51 @@ impl Default for PackageName {
     }
 }
 
-impl FromStr for PackageName {
-    type Err = SyntaxError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        parse_package_name(s).map_err(|e| SyntaxError::new(e))
+impl Display for PackageName {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        if self.user.is_empty() { f.write_str(&self.name) } else { f.write_str(&format!("@{}/{}", self.user, self.name)) }
     }
 }
 
-fn parse_package_name(s: &str) -> Result<PackageName, String> {
-    let mut iter = s.split('@');
-    let user = iter.next().unwrap_or("");
-    let name = iter.next().unwrap_or("");
-    Ok(PackageName { user: user.to_string(), name: name.to_string() })
+impl FromStr for PackageName {
+    type Err = SyntaxError;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let mut user = "";
+        let mut name = "";
+        if input.trim().starts_with('@') {
+            match input.split_once('/') {
+                Some(s) => {
+                    user = s.0.trim_start_matches('@');
+                    name = s.1;
+                },
+                None => {Err(SyntaxError::new("package name must be in the format of @user/name"))?}
+            }
+        }
+        else {
+            name = input;
+        }
+        let out = PackageName::default();
+        for (index, part) in user.split_ascii_whitespace().enumerate() {
+            if index == 0 {
+                out.user = part.to_string();
+            }
+            else {
+                Err(SyntaxError::new("package name must be in the format of @user/name"))?
+            }
+        }
+    }
+}
+
+fn parse_package_name(input: &str) -> Result<PackageName, String> {
+    if s.starts_with('@') {
+        let mut split = s.splitn(2, '/');
+        let user = split.next().unwrap().trim_start_matches('@');
+        let name = split.next().unwrap();
+        Ok(PackageName { user: user.to_string(), name: name.to_string() })
+    }
+    else {
+        Ok(PackageName { user: "".to_string(), name: s.to_string() })
+    }
 }
 
 pub struct PackageNameWriter<'a> {

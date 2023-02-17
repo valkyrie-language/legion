@@ -6,5 +6,5 @@ fn test() {
     [dependencies]
     name = "^1.0"
     "#;
-    println!("{:#?}", toml::from_str::<ValorConfig>(toml));
+    println!("{:#?}", toml::from_str::<ValorConfig>(toml).unwrap());
 }

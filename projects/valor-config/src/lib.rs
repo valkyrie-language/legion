@@ -7,6 +7,7 @@ pub use crate::{
 
 mod errors;
 
+mod types;
 mod dependency;
 mod package;
 mod workspace;

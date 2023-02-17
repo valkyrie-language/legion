@@ -9,7 +9,6 @@ use serde_derive::Serialize;
 use crate::dependency::DependencyResolver;
 
 mod der;
-pub mod name;
 use std::fmt::Display;
 use valkyrie_errors::SyntaxError;
 
