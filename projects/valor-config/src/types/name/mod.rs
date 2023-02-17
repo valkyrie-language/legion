@@ -11,6 +11,10 @@ pub struct PackageName {
     name: String,
 }
 
+impl PackageName {
+
+}
+
 impl Default for PackageName {
     fn default() -> Self {
         Self { user: "".to_string(), name: "".to_string() }
@@ -40,29 +44,34 @@ impl FromStr for PackageName {
         else {
             name = input;
         }
-        let out = PackageName::default();
-        for (index, part) in user.split_ascii_whitespace().enumerate() {
-            if index == 0 {
-                out.user = part.to_string();
-            }
-            else {
-                Err(SyntaxError::new("package name must be in the format of @user/name"))?
-            }
-        }
+        let mut out = PackageName::default();
+        regularize(&mut out.user, user)?;
+        if out.user.starts_with('-') || out.user.ends_with('-') { Err(SyntaxError::new("package user cannot start or end with `-`"))? }
+        if out.user.contains("--") { Err(SyntaxError::new("package user cannot contain `--`"))? }
+        regularize(&mut out.name, name)?;
+        if out.name.is_empty() { Err(SyntaxError::new("package name cannot be empty"))? }
+        if out.name.starts_with(|c| c.is_numeric()) { Err(SyntaxError::new("package name cannot start with a number"))? }
+        if out.name.starts_with('-') || out.name.ends_with('-') { Err(SyntaxError::new("package name cannot start or end with `-`"))? }
+        if out.name.contains("--") { Err(SyntaxError::new("package name cannot contain `--`"))? }
+        Ok(out)
     }
 }
 
-fn parse_package_name(input: &str) -> Result<PackageName, String> {
-    if s.starts_with('@') {
-        let mut split = s.splitn(2, '/');
-        let user = split.next().unwrap().trim_start_matches('@');
-        let name = split.next().unwrap();
-        Ok(PackageName { user: user.to_string(), name: name.to_string() })
+fn regularize(buffer: &mut String, input: &str) -> Result<(), String> {
+    for char in input.chars() {
+        match char {
+            'A'..='Z' => buffer.push(char.to_ascii_lowercase()),
+            'a'..='z' => buffer.push(char),
+            '0'..='9' => buffer.push(char),
+            '-' | '_' | ' ' => buffer.push('-'),
+            _ => return Err(format!("invalid character `{}` in package name", char)),
+        }
     }
-    else {
-        Ok(PackageName { user: "".to_string(), name: s.to_string() })
-    }
+    Ok(())
 }
+
+
+
 
 pub struct PackageNameWriter<'a> {
     ptr: &'a mut PackageName,

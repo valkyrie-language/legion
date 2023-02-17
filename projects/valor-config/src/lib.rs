@@ -2,7 +2,8 @@ pub use errors::{Error, Result};
 
 pub use crate::{
     dependency::{DependencyItem, DependencyResolver},
-    package::{name::PackageName, ValorConfig},
+    package::ValorConfig,
+    types::name::PackageName,
 };
 
 mod errors;

@@ -18,7 +18,7 @@ toml = "0.7.2"
 
 [dependencies.serde-types]
 #path = "../serde-types"
-version = "0.0.2"
+version = "0.1.1"
 
 [dependencies.valkyrie-errors]
 path = "F:\\React\\valkyrie.rs\\projects\\valkyrie-errors"
