@@ -5,8 +5,8 @@ use std::{
 
 use semver::VersionReq;
 use serde_derive::Serialize;
+use crate::PackageName;
 
-use crate::{package::name::PackageName};
 
 mod der;
 mod display;

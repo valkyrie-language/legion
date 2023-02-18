@@ -12,7 +12,31 @@ pub struct PackageName {
 }
 
 impl PackageName {
+    pub fn new(user: &str, name: &str) -> Result<Self, SyntaxError> {
+        let mut out = PackageName::default();
+        out.set_user(user)?;
+        out.set_name(name)?;
+        Ok(out)
+    }
 
+    pub fn get_user(&self) -> &str { &self.user }
+    pub fn set_user(&mut self, user: &str) -> Result<(), SyntaxError> {
+        let new = regularize(user)?;
+        if new.starts_with('-') || new.ends_with('-') { Err(SyntaxError::new("package user cannot start or end with `-`"))? }
+        if new.contains("--") { Err(SyntaxError::new("package user cannot contain `--`"))? }
+        self.user = new;
+        Ok(())
+    }
+    pub fn get_name(&self) -> &str { &self.name }
+    pub fn set_name(&mut self, name: &str) -> Result<(), SyntaxError> {
+        let new = regularize(name)?;
+        if new.is_empty() { Err(SyntaxError::new("package name cannot be empty"))? }
+        if new.starts_with(|c: char| c.is_numeric()) { Err(SyntaxError::new("package name cannot start with a number"))? }
+        if new.starts_with('-') || new.ends_with('-') { Err(SyntaxError::new("package name cannot start or end with `-`"))? }
+        if new.contains("--") { Err(SyntaxError::new("package name cannot contain `--`"))? }
+        self.name = new;
+        Ok(())
+    }
 }
 
 impl Default for PackageName {
@@ -44,30 +68,22 @@ impl FromStr for PackageName {
         else {
             name = input;
         }
-        let mut out = PackageName::default();
-        regularize(&mut out.user, user)?;
-        if out.user.starts_with('-') || out.user.ends_with('-') { Err(SyntaxError::new("package user cannot start or end with `-`"))? }
-        if out.user.contains("--") { Err(SyntaxError::new("package user cannot contain `--`"))? }
-        regularize(&mut out.name, name)?;
-        if out.name.is_empty() { Err(SyntaxError::new("package name cannot be empty"))? }
-        if out.name.starts_with(|c| c.is_numeric()) { Err(SyntaxError::new("package name cannot start with a number"))? }
-        if out.name.starts_with('-') || out.name.ends_with('-') { Err(SyntaxError::new("package name cannot start or end with `-`"))? }
-        if out.name.contains("--") { Err(SyntaxError::new("package name cannot contain `--`"))? }
-        Ok(out)
+        PackageName::new(user, name)
     }
 }
 
-fn regularize(buffer: &mut String, input: &str) -> Result<(), String> {
+fn regularize(input: &str) -> Result<String, SyntaxError> {
+    let mut out = String::with_capacity(input.len());
     for char in input.chars() {
         match char {
-            'A'..='Z' => buffer.push(char.to_ascii_lowercase()),
-            'a'..='z' => buffer.push(char),
-            '0'..='9' => buffer.push(char),
-            '-' | '_' | ' ' => buffer.push('-'),
-            _ => return Err(format!("invalid character `{}` in package name", char)),
+            'A'..='Z' => out.push(char.to_ascii_lowercase()),
+            'a'..='z' => out.push(char),
+            '0'..='9' => out.push(char),
+            '-' | '_' | ' ' => out.push('-'),
+            _ => Err(SyntaxError::new(format!("invalid character `{}` in package name", char)))?,
         }
     }
-    Ok(())
+    Ok(out)
 }
 
 
@@ -108,7 +124,7 @@ impl<'i, 'de> Visitor<'de> for PackageNameWriter<'i> {
     where
         E: Error,
     {
-        match parse_package_name(v) {
+        match PackageName::from_str(v) {
             Ok(o) => *self.ptr = o,
             Err(e) => Err(E::custom(e))?,
         }
