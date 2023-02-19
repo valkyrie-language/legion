@@ -6,6 +6,14 @@ use std::{
 use semver::VersionReq;
 use serde_derive::Serialize;
 use crate::PackageName;
+use std::{ str::FromStr};
+
+use semver::{Version};
+use serde::{
+    de::{Error, MapAccess, Visitor},
+    Deserialize, Deserializer,
+};
+
 
 
 mod der;
@@ -16,13 +24,7 @@ pub struct DependencyResolver {
     items: BTreeMap<String, DependencyItem>,
 }
 
-impl Default for DependencyResolver {
-    fn default() -> Self {
-        Self {
-            items: Default::default(),
-        }
-    }
-}
+
 
 #[derive(Clone, Debug, Serialize)]
 pub struct DependencyItem {

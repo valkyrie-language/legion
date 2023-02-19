@@ -5,7 +5,7 @@ use serde::{
     Deserialize, Deserializer,
 };
 
-use crate::{DependencyItem, ValorConfig};
+use crate::{DependencyItem, DependencyResolver, ValorConfig};
 
 impl Default for ValorConfig {
     fn default() -> Self {
@@ -61,8 +61,22 @@ impl<'i, 'de> Visitor<'de> for ConfigWriter<'i> {
     where
         A: MapAccess<'de>,
     {
-        while let Some((key, value)) = map.next_entry::<String, String>()? {
-            todo!()
+        while let Some(key) = map.next_key::<String>()? {
+            match key.as_str() {
+                "description" => self.ptr.description = map.next_value()?,
+                "authors" => self.ptr.authors = map.next_value()?,
+                "dependencies" => self.ptr.dependencies = map.next_value()?,
+                "scripts" => self.ptr.scripts = map.next_value()?,
+                "files" => self.ptr.files = map.next_value()?,
+                "main" => self.ptr.main = map.next_value()?,
+                "bin" => self.ptr.bin = map.next_value()?,
+                "keywords" => self.ptr.keywords = map.next_value()?,
+                "license" => self.ptr.license = map.next_value()?,
+                "repository" => self.ptr.repository = map.next_value()?,
+                "homepage" => self.ptr.homepage = map.next_value()?,
+                "bugs" => self.ptr.bugs = map.next_value()?,
+                _ => {}
+            }
         }
         Ok(())
     }

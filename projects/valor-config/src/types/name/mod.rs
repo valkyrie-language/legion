@@ -1,5 +1,3 @@
-use std::hash::Hash;
-
 use super::*;
 
 // `name`
@@ -19,21 +17,37 @@ impl PackageName {
         Ok(out)
     }
 
-    pub fn get_user(&self) -> &str { &self.user }
+    pub fn get_user(&self) -> &str {
+        &self.user
+    }
     pub fn set_user(&mut self, user: &str) -> Result<(), SyntaxError> {
         let new = regularize(user)?;
-        if new.starts_with('-') || new.ends_with('-') { Err(SyntaxError::new("package user cannot start or end with `-`"))? }
-        if new.contains("--") { Err(SyntaxError::new("package user cannot contain `--`"))? }
+        if new.starts_with('-') || new.ends_with('-') {
+            Err(SyntaxError::new("package user cannot start or end with `-`"))?
+        }
+        if new.contains("--") {
+            Err(SyntaxError::new("package user cannot contain `--`"))?
+        }
         self.user = new;
         Ok(())
     }
-    pub fn get_name(&self) -> &str { &self.name }
+    pub fn get_name(&self) -> &str {
+        &self.name
+    }
     pub fn set_name(&mut self, name: &str) -> Result<(), SyntaxError> {
         let new = regularize(name)?;
-        if new.is_empty() { Err(SyntaxError::new("package name cannot be empty"))? }
-        if new.starts_with(|c: char| c.is_numeric()) { Err(SyntaxError::new("package name cannot start with a number"))? }
-        if new.starts_with('-') || new.ends_with('-') { Err(SyntaxError::new("package name cannot start or end with `-`"))? }
-        if new.contains("--") { Err(SyntaxError::new("package name cannot contain `--`"))? }
+        if new.is_empty() {
+            Err(SyntaxError::new("package name cannot be empty"))?
+        }
+        if new.starts_with(|c: char| c.is_numeric()) {
+            Err(SyntaxError::new("package name cannot start with a number"))?
+        }
+        if new.starts_with('-') || new.ends_with('-') {
+            Err(SyntaxError::new("package name cannot start or end with `-`"))?
+        }
+        if new.contains("--") {
+            Err(SyntaxError::new("package name cannot contain `--`"))?
+        }
         self.name = new;
         Ok(())
     }
@@ -61,8 +75,8 @@ impl FromStr for PackageName {
                 Some(s) => {
                     user = s.0.trim_start_matches('@');
                     name = s.1;
-                },
-                None => {Err(SyntaxError::new("package name must be in the format of @user/name"))?}
+                }
+                None => Err(SyntaxError::new("package name must be in the format of @user/name"))?,
             }
         }
         else {
@@ -86,32 +100,7 @@ fn regularize(input: &str) -> Result<String, SyntaxError> {
     Ok(out)
 }
 
-
-
-
-pub struct PackageNameWriter<'a> {
-    ptr: &'a mut PackageName,
-}
-
-impl<'de> Deserialize<'de> for PackageName {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let mut out = Self::default();
-        let writer = PackageNameWriter { ptr: &mut out };
-        deserializer.deserialize_any(writer)?;
-        Ok(out)
-    }
-    fn deserialize_in_place<D>(deserializer: D, place: &mut Self) -> Result<(), D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let writer = PackageNameWriter { ptr: place };
-        deserializer.deserialize_any(writer)?;
-        Ok(())
-    }
-}
+bind_writer!(PackageNameWriter, PackageName);
 
 impl<'i, 'de> Visitor<'de> for PackageNameWriter<'i> {
     type Value = ();

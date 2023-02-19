@@ -1,12 +1,18 @@
 use std::{fmt::Formatter, str::FromStr};
 
-use semver::{Version, VersionReq};
+use semver::VersionReq;
 use serde::{
     de::{Error, MapAccess, Visitor},
     Deserialize, Deserializer,
 };
 
-use crate::{DependencyItem, PackageName};
+use crate::{bind_writer, DependencyItem, DependencyResolver, PackageName};
+
+impl Default for DependencyResolver {
+    fn default() -> Self {
+        Self { items: Default::default() }
+    }
+}
 
 impl Default for DependencyItem {
     fn default() -> Self {
@@ -22,29 +28,32 @@ impl Default for DependencyItem {
     }
 }
 
-struct DependencyWriter<'i> {
-    ptr: &'i mut DependencyItem,
-}
+bind_writer!(DependencyResolverWriter, DependencyResolver);
 
-impl<'de> Deserialize<'de> for DependencyItem {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let mut out = Self::default();
-        let writer = DependencyWriter { ptr: &mut out };
-        deserializer.deserialize_any(writer)?;
-        Ok(out)
+impl<'i, 'de> Visitor<'de> for DependencyResolverWriter<'i> {
+    type Value = ();
+
+    fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
+        formatter.write_str("expecting a dependency resolver")
     }
-    fn deserialize_in_place<D>(deserializer: D, place: &mut Self) -> Result<(), D::Error>
+
+    fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
     where
-        D: Deserializer<'de>,
+        A: MapAccess<'de>,
     {
-        let writer = DependencyWriter { ptr: place };
-        deserializer.deserialize_any(writer)?;
+        while let Some(key) = map.next_key::<String>()? {
+            match key.as_str() {
+                "dependencies" => {
+                    self.ptr.items = map.next_value()?;
+                }
+                _ => {}
+            }
+        }
         Ok(())
     }
 }
+
+bind_writer!(DependencyWriter, DependencyItem);
 
 impl<'i, 'de> Visitor<'de> for DependencyWriter<'i> {
     type Value = ();
