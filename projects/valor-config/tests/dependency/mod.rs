@@ -4,7 +4,11 @@ use valor_config::ValorConfig;
 fn test() {
     let toml = r#"
     [dependencies]
-    name = "^1.0"
+    "dp1" = "^1.0"
+    "@a/dp2" = { path = "path/to/dep" }
+    
+    [dependencies.dp3]
+    version = "^1.0.2-alpha"
     "#;
     println!("{:#?}", toml::from_str::<ValorConfig>(toml).unwrap());
 }

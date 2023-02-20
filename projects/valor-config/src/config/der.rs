@@ -1,17 +1,8 @@
-use std::{collections::BTreeMap, fmt::Formatter, str::FromStr};
-
-use serde::{
-    de::{MapAccess, Visitor},
-    Deserialize, Deserializer,
-};
-
-use crate::{DependencyItem, DependencyResolver, ValorConfig};
+use super::*;
 
 impl Default for ValorConfig {
     fn default() -> Self {
         Self {
-            description: "".to_string(),
-            authors: vec![],
             dependencies: Default::default(),
             scripts: vec![],
             files: vec![],
@@ -26,29 +17,7 @@ impl Default for ValorConfig {
     }
 }
 
-struct ConfigWriter<'i> {
-    ptr: &'i mut ValorConfig,
-}
-
-impl<'de> Deserialize<'de> for ValorConfig {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let mut out = Self::default();
-        let writer = ConfigWriter { ptr: &mut out };
-        deserializer.deserialize_any(writer)?;
-        Ok(out)
-    }
-    fn deserialize_in_place<D>(deserializer: D, place: &mut Self) -> Result<(), D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let writer = ConfigWriter { ptr: place };
-        deserializer.deserialize_any(writer)?;
-        Ok(())
-    }
-}
+bind_writer!(ConfigWriter, ValorConfig);
 
 impl<'i, 'de> Visitor<'de> for ConfigWriter<'i> {
     type Value = ();
@@ -63,9 +32,10 @@ impl<'i, 'de> Visitor<'de> for ConfigWriter<'i> {
     {
         while let Some(key) = map.next_key::<String>()? {
             match key.as_str() {
-                "description" => self.ptr.description = map.next_value()?,
-                "authors" => self.ptr.authors = map.next_value()?,
-                "dependencies" => self.ptr.dependencies = map.next_value()?,
+                "dependencies" => self.ptr.dependencies.visit_map(&mut map, DependencyKind::Normal)?,
+                "dev-dependencies" => self.ptr.dependencies.visit_map(&mut map, DependencyKind::Development)?,
+                "peerDependencies" => self.ptr.dependencies.visit_map(&mut map, DependencyKind::Normal)?,
+                "build-dependencies" => self.ptr.dependencies.visit_map(&mut map, DependencyKind::Build)?,
                 "scripts" => self.ptr.scripts = map.next_value()?,
                 "files" => self.ptr.files = map.next_value()?,
                 "main" => self.ptr.main = map.next_value()?,

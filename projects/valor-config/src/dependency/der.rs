@@ -1,12 +1,4 @@
-use std::{fmt::Formatter, str::FromStr};
-
-use semver::VersionReq;
-use serde::{
-    de::{Error, MapAccess, Visitor},
-    Deserialize, Deserializer,
-};
-
-use crate::{bind_writer, DependencyItem, DependencyResolver, PackageName};
+use super::*;
 
 impl Default for DependencyResolver {
     fn default() -> Self {
@@ -19,12 +11,19 @@ impl Default for DependencyItem {
         Self {
             name: PackageName::default(),
             version: VersionReq::default(),
+            kind: DependencyKind::Normal,
             path: "".to_string(),
             git: "".to_string(),
             branch: "".to_string(),
             tag: "".to_string(),
             registry: "".to_string(),
         }
+    }
+}
+
+impl Default for DependencyKind {
+    fn default() -> Self {
+        Self::Normal
     }
 }
 
@@ -41,12 +40,13 @@ impl<'i, 'de> Visitor<'de> for DependencyResolverWriter<'i> {
     where
         A: MapAccess<'de>,
     {
-        while let Some(key) = map.next_key::<String>()? {
-            match key.as_str() {
-                "dependencies" => {
-                    self.ptr.items = map.next_value()?;
+        while let Some((key, mut item)) = map.next_entry::<String, DependencyItem>()? {
+            match PackageName::from_str(&key) {
+                Ok(o) => {
+                    item.name = o;
+                    self.ptr.register(item);
                 }
-                _ => {}
+                Err(e) => Err(Error::custom(e))?,
             }
         }
         Ok(())
@@ -84,6 +84,9 @@ impl<'i, 'de> Visitor<'de> for DependencyWriter<'i> {
                 "name" => self.ptr.name = map.next_value()?,
                 "version" => {
                     self.ptr.version = map.next_value()?;
+                }
+                "kind" => {
+                    self.ptr.kind = map.next_value()?;
                 }
                 "path" => {
                     self.ptr.path = map.next_value()?;

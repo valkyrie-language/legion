@@ -1,4 +1,7 @@
-use std::{fmt::Formatter, str::FromStr};
+use std::{
+    fmt::{Display, Formatter},
+    str::FromStr,
+};
 
 use serde::{
     de::{Error, MapAccess, Visitor},
@@ -6,19 +9,17 @@ use serde::{
 };
 use serde_derive::Serialize;
 
-use crate::dependency::DependencyResolver;
+use crate::{
+    bind_writer,
+    dependency::{DependencyKind, DependencyResolver},
+};
 
 mod der;
-use std::fmt::Display;
-use valkyrie_errors::SyntaxError;
-
 
 #[derive(Clone, Debug, Serialize)]
 pub struct ValorConfig {
-    pub description: String,
-    pub authors: Vec<String>,
     dependencies: DependencyResolver,
-    pub scripts: Vec<String>,
+    scripts: Vec<String>,
     pub files: Vec<String>,
     pub main: String,
     pub bin: Vec<String>,
