@@ -5,6 +5,7 @@ pub use crate::{
     dependency::{DependencyItem, DependencyKind, DependencyResolver},
     package::ValorPackage,
     types::name::PackageName,
+    workspace::ValorWorkspace,
 };
 
 mod config;

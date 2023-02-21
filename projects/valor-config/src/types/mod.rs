@@ -11,4 +11,5 @@ use std::{
 };
 use valkyrie_errors::SyntaxError;
 
+pub mod features;
 pub mod name;

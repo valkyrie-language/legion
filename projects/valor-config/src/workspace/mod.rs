@@ -1,6 +1,4 @@
-use crate::DependencyItem;
-
-use std::fmt::Formatter;
+use std::{fmt::Formatter, path::PathBuf};
 
 use serde::{
     de::{MapAccess, Visitor},
@@ -9,30 +7,26 @@ use serde::{
 use serde_types::OneOrMany;
 
 #[derive(Debug, Clone, Serialize)]
-pub struct Workspace {
-    pub enabled: bool,
-    pub include: Vec<String>,
+pub struct ValorWorkspace {
+    pub root: PathBuf,
     pub exclude: Vec<String>,
+    pub include: Vec<String>,
 }
 
-impl Workspace {
-    pub fn enable(&mut self) {
-        self.enabled = true;
-    }
-}
+impl ValorWorkspace {}
 
-impl Default for Workspace {
+impl Default for ValorWorkspace {
     fn default() -> Self {
-        Self { enabled: false, include: vec![], exclude: vec![] }
+        Self { root: PathBuf::from("<<MISSING>>"), include: vec![], exclude: vec![] }
     }
 }
 
-impl<'de> Deserialize<'de> for Workspace {
+impl<'de> Deserialize<'de> for ValorWorkspace {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        let mut default = Workspace::default();
+        let mut default = ValorWorkspace::default();
         Deserialize::deserialize_in_place(deserializer, &mut default)?;
         return Ok(default);
     }
@@ -45,7 +39,7 @@ impl<'de> Deserialize<'de> for Workspace {
 }
 
 struct WorkspaceVisitor<'de> {
-    body: &'de mut Workspace,
+    body: &'de mut ValorWorkspace,
 }
 
 impl<'de, 'body> Visitor<'de> for WorkspaceVisitor<'body> {
@@ -69,6 +63,6 @@ impl<'de, 'body> Visitor<'de> for WorkspaceVisitor<'body> {
                 _ => {}
             }
         }
-        todo!()
+        Ok(())
     }
 }

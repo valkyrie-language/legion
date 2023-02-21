@@ -1,5 +1,6 @@
 use std::{
     fmt::{Display, Formatter},
+    path::PathBuf,
     str::FromStr,
 };
 
@@ -9,23 +10,27 @@ use serde::{
 };
 use serde_derive::Serialize;
 
-use crate::{
-    bind_writer,
-    dependency::{DependencyKind, DependencyResolver},
-};
+use crate::{bind_writer, DependencyKind, DependencyResolver, ValorPackage, ValorWorkspace};
 
 mod der;
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Default, Serialize)]
 pub struct ValorConfig {
-    dependencies: DependencyResolver,
+    workspace: ValorWorkspace,
+    template: ValorPackage,
+    package: ValorPackage,
     scripts: Vec<String>,
-    pub files: Vec<String>,
-    pub main: String,
-    pub bin: Vec<String>,
-    pub keywords: Vec<String>,
-    pub license: String,
-    pub repository: String,
-    pub homepage: String,
-    pub bugs: String,
+    dependencies: DependencyResolver,
+}
+
+impl ValorConfig {
+    pub fn is_workspace(&self) -> bool {
+        self.workspace.root != PathBuf::from("<<MISSING>>")
+    }
+    pub fn is_template(&self) -> bool {
+        !self.package.is_valid()
+    }
+    pub fn is_package(&self) -> bool {
+        !self.is_workspace() && !self.is_template()
+    }
 }

@@ -1,3 +1,18 @@
+[workspace]
+members = ["projects/*"]
+include = [
+    "projects/valor-config",
+]
+exclude = [
+    "projects/.DS_Store",
+]
+
+[profile.release]
+lto = true
+panic = "abort"
+
+
+
 [package]
 name = "valor-core"
 publish = false

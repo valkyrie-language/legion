@@ -4,14 +4,14 @@ use super::*;
 // `@user/name`
 // `@user/name-path`
 #[derive(Clone, Debug, Hash, Eq, PartialEq, Serialize)]
-pub struct PackageName {
+pub struct PackageFeatures {
     user: String,
     name: String,
 }
 
-impl PackageName {
+impl PackageFeatures {
     pub fn new(user: &str, name: &str) -> Result<Self, SyntaxError> {
-        let mut out = PackageName::default();
+        let mut out = PackageFeatures::default();
         out.set_user(user)?;
         out.set_name(name)?;
         Ok(out)
@@ -57,19 +57,19 @@ impl PackageName {
     }
 }
 
-impl Default for PackageName {
+impl Default for PackageFeatures {
     fn default() -> Self {
         Self { user: "".to_string(), name: "".to_string() }
     }
 }
 
-impl Display for PackageName {
+impl Display for PackageFeatures {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         if self.user.is_empty() { f.write_str(&self.name) } else { f.write_str(&format!("@{}/{}", self.user, self.name)) }
     }
 }
 
-impl FromStr for PackageName {
+impl FromStr for PackageFeatures {
     type Err = SyntaxError;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let mut user = "";
@@ -86,7 +86,7 @@ impl FromStr for PackageName {
         else {
             name = input;
         }
-        PackageName::new(user, name)
+        PackageFeatures::new(user, name)
     }
 }
 
@@ -104,7 +104,7 @@ fn regularize(input: &str) -> Result<String, SyntaxError> {
     Ok(out)
 }
 
-bind_writer!(PackageNameWriter, PackageName);
+bind_writer!(PackageNameWriter, PackageFeatures);
 
 impl<'i, 'de> Visitor<'de> for PackageNameWriter<'i> {
     type Value = ();
@@ -117,7 +117,7 @@ impl<'i, 'de> Visitor<'de> for PackageNameWriter<'i> {
     where
         E: Error,
     {
-        match PackageName::from_str(v) {
+        match PackageFeatures::from_str(v) {
             Ok(o) => *self.ptr = o,
             Err(e) => Err(E::custom(e))?,
         }
