@@ -1,6 +1,6 @@
 use std::{
     fmt::{Display, Formatter},
-    path::PathBuf,
+    path::{Path, PathBuf},
     str::FromStr,
 };
 
@@ -9,6 +9,7 @@ use serde::{
     Deserialize, Deserializer,
 };
 use serde_derive::Serialize;
+use valkyrie_errors::ValkyrieResult;
 
 use crate::{bind_writer, DependencyKind, DependencyResolver, ValorPackage, ValorWorkspace};
 
@@ -17,10 +18,20 @@ mod der;
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct ValorConfig {
     workspace: ValorWorkspace,
-    template: ValorPackage,
     package: ValorPackage,
     scripts: Vec<String>,
     dependencies: DependencyResolver,
+}
+
+impl ValorConfig {
+    pub fn load<P: AsRef<Path>>(dir: P) -> ValkyrieResult<ValorConfig> {
+        let dir = dir.as_ref().canonicalize()?;
+        println!("Loading config from {}", dir.display());
+        Ok(todo!())
+    }
+    fn try_load_file(dir: &Path) {
+        if dir.join("valor.toml") {}
+    }
 }
 
 impl ValorConfig {

@@ -1,5 +1,6 @@
 use std::{fmt::Formatter, path::PathBuf};
 
+use crate::ValorPackage;
 use serde::{
     de::{MapAccess, Visitor},
     Deserialize, Deserializer, Serialize,
@@ -11,13 +12,14 @@ pub struct ValorWorkspace {
     pub root: PathBuf,
     pub exclude: Vec<String>,
     pub include: Vec<String>,
+    pub template: ValorPackage,
 }
 
 impl ValorWorkspace {}
 
 impl Default for ValorWorkspace {
     fn default() -> Self {
-        Self { root: PathBuf::from("<<MISSING>>"), include: vec![], exclude: vec![] }
+        Self { root: PathBuf::from("<<MISSING>>"), include: vec![], exclude: vec![], template: Default::default() }
     }
 }
 

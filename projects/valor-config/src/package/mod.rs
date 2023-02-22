@@ -1,7 +1,11 @@
+use std::ops::AddAssign;
+
 use semver::Version;
 use serde_derive::{Deserialize, Serialize};
 
 use crate::PackageName;
+
+mod display;
 
 // name = "valor-core"
 // publish = false
@@ -13,7 +17,7 @@ use crate::PackageName;
 // readme = "Readme.md"
 // license = "MPL-2.0"
 // edition = "2021"
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct ValorPackage {
     name: PackageName,
     publish: bool,
@@ -24,6 +28,12 @@ pub struct ValorPackage {
     documentation: String,
     license: String,
     readme: String,
+}
+
+impl AddAssign<Self> for ValorPackage {
+    fn add_assign(&mut self, rhs: Self) {
+        println!("Merge: {:#?}", rhs);
+    }
 }
 
 impl Default for ValorPackage {

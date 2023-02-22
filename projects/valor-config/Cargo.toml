@@ -1,10 +1,10 @@
 [package]
 name = "valor-config"
-version = "0.0.0"
+version = "0.1.0"
 authors = ["Aster <192607617@qq.com>"]
 description = "Valkyrie workspace manager"
-repository = "https://github.com/oovm/sub_projects"
-documentation = "https://docs.rs/sub_projects"
+repository = "https://github.com/nyar-vm/valkyrie-valor"
+documentation = "https://docs.rs/valor-config"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"
@@ -14,6 +14,7 @@ serde = "1.0.152"
 serde_derive = "1.0.152"
 #config = "0.13.3"
 semver = { version = "1.0.16", features = ["serde"] }
+json5 = "0.4.1"
 toml = "0.7.2"
 
 [dependencies.serde-types]
@@ -21,8 +22,8 @@ toml = "0.7.2"
 version = "0.1.1"
 
 [dependencies.valkyrie-errors]
-path = "F:\\React\\valkyrie.rs\\projects\\valkyrie-errors"
-#version = "0.0.2"
+version = "0.0.3"
+features = ["toml", "json5"]
 
 [dev-dependencies]
 

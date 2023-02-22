@@ -4,14 +4,15 @@ use super::*;
 // `@user/name`
 // `@user/name-path`
 #[derive(Clone, Debug, Hash, Eq, PartialEq, Serialize)]
-pub struct PackageFeatures {
+pub struct PackageFeature {
+    default: Vec<String>,
     user: String,
     name: String,
 }
 
-impl PackageFeatures {
+impl PackageFeature {
     pub fn new(user: &str, name: &str) -> Result<Self, SyntaxError> {
-        let mut out = PackageFeatures::default();
+        let mut out = PackageFeature::default();
         out.set_user(user)?;
         out.set_name(name)?;
         Ok(out)
@@ -57,19 +58,19 @@ impl PackageFeatures {
     }
 }
 
-impl Default for PackageFeatures {
+impl Default for PackageFeature {
     fn default() -> Self {
-        Self { user: "".to_string(), name: "".to_string() }
+        Self { default: vec![], user: "".to_string(), name: "".to_string() }
     }
 }
 
-impl Display for PackageFeatures {
+impl Display for PackageFeature {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         if self.user.is_empty() { f.write_str(&self.name) } else { f.write_str(&format!("@{}/{}", self.user, self.name)) }
     }
 }
 
-impl FromStr for PackageFeatures {
+impl FromStr for PackageFeature {
     type Err = SyntaxError;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let mut user = "";
@@ -86,7 +87,7 @@ impl FromStr for PackageFeatures {
         else {
             name = input;
         }
-        PackageFeatures::new(user, name)
+        PackageFeature::new(user, name)
     }
 }
 
@@ -104,7 +105,7 @@ fn regularize(input: &str) -> Result<String, SyntaxError> {
     Ok(out)
 }
 
-bind_writer!(PackageNameWriter, PackageFeatures);
+bind_writer!(PackageNameWriter, PackageFeature);
 
 impl<'i, 'de> Visitor<'de> for PackageNameWriter<'i> {
     type Value = ();
@@ -117,7 +118,7 @@ impl<'i, 'de> Visitor<'de> for PackageNameWriter<'i> {
     where
         E: Error,
     {
-        match PackageFeatures::from_str(v) {
+        match PackageFeature::from_str(v) {
             Ok(o) => *self.ptr = o,
             Err(e) => Err(E::custom(e))?,
         }

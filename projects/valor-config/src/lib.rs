@@ -4,7 +4,7 @@ pub use crate::{
     config::ValorConfig,
     dependency::{DependencyItem, DependencyKind, DependencyResolver},
     package::ValorPackage,
-    types::name::PackageName,
+    types::{features::PackageFeature, name::PackageName},
     workspace::ValorWorkspace,
 };
 
