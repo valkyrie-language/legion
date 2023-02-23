@@ -1,5 +1,7 @@
 use std::{
+    ffi::OsStr,
     fmt::{Display, Formatter},
+    fs::read_to_string,
     path::{Path, PathBuf},
     str::FromStr,
 };
@@ -23,15 +25,10 @@ pub struct ValorConfig {
     dependencies: DependencyResolver,
 }
 
-impl ValorConfig {
-    pub fn load<P: AsRef<Path>>(dir: P) -> ValkyrieResult<ValorConfig> {
-        let dir = dir.as_ref().canonicalize()?;
-        println!("Loading config from {}", dir.display());
-        Ok(todo!())
-    }
-    fn try_load_file(dir: &Path) {
-        if dir.join("valor.toml") {}
-    }
+pub enum SupportFormat {
+    Nothing,
+    Toml,
+    Json,
 }
 
 impl ValorConfig {
