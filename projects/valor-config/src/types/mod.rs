@@ -1,8 +1,5 @@
 use crate::bind_writer;
-use serde::{
-    de::{Error, MapAccess, Visitor},
-    Deserialize, Deserializer,
-};
+use serde::de::{Error, MapAccess, Visitor};
 use serde_derive::Serialize;
 use std::{
     fmt::{Display, Formatter},

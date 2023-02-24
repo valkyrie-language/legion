@@ -114,7 +114,7 @@ impl<'i, 'de> Visitor<'de> for PackageNameWriter<'i> {
         formatter.write_str("Expect a string or a `ValorPackageName` object.")
     }
 
-    fn visit_str<E>(mut self, v: &str) -> Result<Self::Value, E>
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
     where
         E: Error,
     {

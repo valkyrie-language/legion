@@ -10,7 +10,6 @@ pub use crate::{
 
 mod config;
 mod dependency;
-mod errors;
 mod package;
 mod types;
 mod workspace;

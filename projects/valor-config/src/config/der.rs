@@ -4,7 +4,10 @@ use super::*;
 
 impl ValorConfig {
     pub fn load<P: AsRef<Path>>(dir: P) -> ValkyrieResult<ValorConfig> {
-        let dir = dir.as_ref().canonicalize()?;
+        let dir = match dir.as_ref().canonicalize() {
+            Ok(o) => o,
+            Err(_) => Err(ValkyrieError::runtime_error(format!("Directory `{}` does not exist.", dir.as_ref().display())))?,
+        };
         let mut config = match try_load_from(&dir)? {
             (SupportFormat::Toml, s) => toml::from_str::<Self>(&s)?,
             (SupportFormat::Json, s) => json5::from_str(&s)?,

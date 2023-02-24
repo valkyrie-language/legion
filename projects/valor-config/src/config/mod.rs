@@ -1,15 +1,11 @@
 use std::{
     ffi::OsStr,
-    fmt::{Display, Formatter},
+    fmt::Formatter,
     fs::read_to_string,
     path::{Path, PathBuf},
-    str::FromStr,
 };
 
-use serde::{
-    de::{Error, MapAccess, Visitor},
-    Deserialize, Deserializer,
-};
+use serde::de::{MapAccess, Visitor};
 use serde_derive::Serialize;
 use valkyrie_errors::ValkyrieResult;
 

@@ -1,13 +1,13 @@
 use std::{
     collections::BTreeMap,
-    fmt::{Display, Formatter, Write},
+    fmt::{Display, Formatter},
     str::FromStr,
 };
 
 use semver::VersionReq;
 use serde::{
     de::{Error, MapAccess, Visitor},
-    Deserialize, Deserializer,
+    Deserialize,
 };
 use serde_derive::Serialize;
 

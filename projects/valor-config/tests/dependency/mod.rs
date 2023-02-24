@@ -8,3 +8,9 @@ fn test() -> ValkyrieResult {
     json5::from_str::<ValorConfig>(include_str!("deps1.json5"))?;
     Ok(())
 }
+
+#[test]
+fn test2() -> ValkyrieResult {
+    println!("{:#?}", ValorConfig::load("tests/mock1")?);
+    Ok(())
+}
