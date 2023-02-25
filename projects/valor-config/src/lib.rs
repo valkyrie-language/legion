@@ -1,5 +1,3 @@
-pub use errors::{Error, Result};
-
 pub use crate::{
     config::ValorConfig,
     dependency::{DependencyItem, DependencyKind, DependencyResolver},

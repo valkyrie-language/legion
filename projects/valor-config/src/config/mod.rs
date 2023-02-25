@@ -37,4 +37,10 @@ impl ValorConfig {
     pub fn is_package(&self) -> bool {
         !self.is_workspace() && !self.is_template()
     }
+    pub fn discover_packages(&self) {
+        assert!(self.is_workspace(), "Ensure that this is a workspace");
+    }
+    pub fn discover_dependencies(&self) {
+        assert!(self.is_package(), "Ensure that this is a package");
+    }
 }

@@ -1,5 +1,8 @@
 [workspace]
-members = ["projects/*"]
+packages = [
+    "projects/*"
+]
+projects = ["projects/*"]
 include = [
     "projects/valor-config",
 ]

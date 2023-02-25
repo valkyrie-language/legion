@@ -16,6 +16,7 @@ serde_derive = "1.0.152"
 semver = { version = "1.0.16", features = ["serde"] }
 json5 = "0.4.1"
 toml = "0.7.2"
+globset = "0.4.8"
 
 [dependencies.serde-types]
 #path = "../serde-types"

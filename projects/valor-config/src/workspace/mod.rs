@@ -10,8 +10,7 @@ use serde_types::OneOrMany;
 #[derive(Debug, Clone, Serialize)]
 pub struct ValorWorkspace {
     pub root: PathBuf,
-    pub exclude: Vec<String>,
-    pub include: Vec<String>,
+    pub packages: Vec<String>,
     pub template: ValorPackage,
 }
 
@@ -19,7 +18,7 @@ impl ValorWorkspace {}
 
 impl Default for ValorWorkspace {
     fn default() -> Self {
-        Self { root: PathBuf::from("<<MISSING>>"), include: vec![], exclude: vec![], template: Default::default() }
+        Self { root: PathBuf::from("<<MISSING>>"), include: vec![], packages: vec![], template: Default::default() }
     }
 }
 
@@ -60,7 +59,7 @@ impl<'de, 'body> Visitor<'de> for WorkspaceVisitor<'body> {
                     self.body.include = map.next_value::<OneOrMany<String>>()?.unwrap();
                 }
                 "exclude" => {
-                    self.body.exclude = map.next_value::<OneOrMany<String>>()?.unwrap();
+                    self.body.packages = map.next_value::<OneOrMany<String>>()?.unwrap();
                 }
                 _ => {}
             }
