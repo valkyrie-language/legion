@@ -1,7 +1,8 @@
 [workspace]
 members = ["projects/*"]
 default-members = [
-    "projects/valor-config",
+    "projects/legion-app",
+    "projects/legion-config",
 ]
 exclude = [
     "projects/.DS_Store",
