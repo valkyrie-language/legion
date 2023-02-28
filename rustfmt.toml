@@ -1,5 +1,5 @@
 version = "Two"
-edition = "2018"
+style_editon = "2018"
 max_width = 128
 
 imports_granularity = "Crate"

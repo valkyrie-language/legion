@@ -1,68 +1,50 @@
-use std::path::PathBuf;
+mod cli_cmds;
 
-use clap::{Parser, Subcommand};
-
+use clap::{Args, Parser, Subcommand};
+pub use cli_cmds::{LegionCommands, cmd_add::AddCommand, cmd_install::InstallCommand, cmd_new::NewCommand};
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
-struct Cli {
-    /// Optional name to operate on
-    name: Option<String>,
-
-    /// Sets a custom config file
-    #[arg(short, long, value_name = "FILE")]
-    config: Option<PathBuf>,
-
-    /// Turn debugging information on
-    #[arg(short, long, action = clap::ArgAction::Count)]
-    debug: u8,
-
+pub struct LegionCLI {
+    #[command(flatten)]
+    options: LegionOptions,
     #[command(subcommand)]
-    command: Option<Commands>,
+    command: Option<LegionCommands>,
+}
+/// Legion global options
+#[derive(Args)]
+struct LegionOptions {
+    /// Timing Tracing Debugging
+    ///
+    /// `-t`: show time
+    /// `-tt`: show time and memory
+    /// `-ttt`: show time, memory, and stack
+    #[arg(short, long, action = clap::ArgAction::Count)]
+    timing: u8,
+    /// Skip confirmation before irreversible side effects
+    ///
+    /// e.g. `rm`, `publish`
+    #[arg(long)]
+    yes: bool,
 }
 
-#[derive(Subcommand)]
-enum Commands {
-    /// does testing things
-    Test {
-        /// lists test values
-        #[arg(short, long)]
-        list: bool,
-    },
+impl LegionCLI {
+    pub fn run(&self) {
+        if self.options.timing != 0 {
+            println!("Timing mode is on");
+        }
+        else {
+            println!("Timing mode is off");
+        }
+        match &self.command {
+            Some(c) => c.run(),
+            None => {}
+        }
+        if self.options.yes {
+            println!("Dry run mode is on");
+        }
+    }
 }
 
 fn main() {
-    let cli = Cli::parse();
-
-    // You can check the value provided by positional arguments, or option arguments
-    if let Some(name) = cli.name.as_deref() {
-        println!("Value for name: {name}");
-    }
-
-    if let Some(config_path) = cli.config.as_deref() {
-        println!("Value for config: {}", config_path.display());
-    }
-
-    // You can see how many times a particular flag or argument occurred
-    // Note, only flags can have multiple occurrences
-    match cli.debug {
-        0 => println!("Debug mode is off"),
-        1 => println!("Debug mode is kind of on"),
-        2 => println!("Debug mode is on"),
-        _ => println!("Don't be crazy"),
-    }
-
-    // You can check for the existence of subcommands, and if found use their
-    // matches just as you would the top level cmd
-    match &cli.command {
-        Some(Commands::Test { list }) => {
-            if *list {
-                println!("Printing testing lists...");
-            } else {
-                println!("Not printing testing lists...");
-            }
-        }
-        None => {}
-    }
-
-    // Continued program logic goes here...
+    LegionCLI::parse().run()
 }
