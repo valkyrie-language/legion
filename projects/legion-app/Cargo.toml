@@ -10,7 +10,13 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.94"
 clap = { version = "4.5.23", features = ["derive"] }
+url = "2.5.4"
+tokio = { version = "1.42.0", features = ["full"] }
+wat = { version = "1.222.0", features = ["component-model", "dwarf"] }
+wasmprinter = { version = "0.222.0", features = ["component-model"] }
+reqwest = "0.12.9"
 
 [dev-dependencies]
 

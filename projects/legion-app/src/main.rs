@@ -1,4 +1,5 @@
 mod cli_cmds;
+mod helpers;
 
 use clap::{Args, Parser, Subcommand};
 pub use cli_cmds::{LegionCommands, cmd_add::AddCommand, cmd_install::InstallCommand, cmd_new::NewCommand};
@@ -12,7 +13,7 @@ pub struct LegionCLI {
 }
 /// Legion global options
 #[derive(Args)]
-struct LegionOptions {
+pub struct LegionOptions {
     /// Timing Tracing Debugging
     ///
     /// `-t`: show time
@@ -28,23 +29,25 @@ struct LegionOptions {
 }
 
 impl LegionCLI {
-    pub fn run(&self) {
+    pub fn run(&self) -> anyhow::Result<()> {
         if self.options.timing != 0 {
             println!("Timing mode is on");
         }
         else {
             println!("Timing mode is off");
         }
-        match &self.command {
-            Some(c) => c.run(),
+        let Self { options, command } = self;
+        match command {
+            Some(c) => c.run(options)?,
             None => {}
         }
         if self.options.yes {
             println!("Dry run mode is on");
         }
+        Ok(())
     }
 }
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     LegionCLI::parse().run()
 }
