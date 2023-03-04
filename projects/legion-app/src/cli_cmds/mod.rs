@@ -7,6 +7,8 @@ use tokio::{
 };
 use url::Url;
 use wat::GenerateDwarf;
+use crate::cli_cmds::cmd_decode::DecodeCommand;
+use crate::cli_cmds::cmd_encode::EncodeCommand;
 
 pub mod cmd_add;
 pub mod cmd_decode;
@@ -22,9 +24,9 @@ pub enum LegionCommands {
     Add(AddCommand),
     Clone(NewCommand),
     /// Encode wat to wasm
-    WasmEncode(NewCommand),
+    Encode(EncodeCommand),
     /// Decode wasm to wat
-    WasmDecode(NewCommand),
+    Decode(DecodeCommand),
     /// add to global
     #[command(short_flag = 'i')]
     Install(InstallCommand),
@@ -38,7 +40,7 @@ pub enum LegionCommands {
 }
 
 impl LegionCommands {
-    pub fn run(&self, args: &LegionOptions) -> anyhow::Result<()> {
+    pub async fn run(&self, args: &LegionOptions) -> anyhow::Result<()> {
         match self {
             Self::New(_) => {}
             Self::Add(_) => {}
@@ -47,8 +49,10 @@ impl LegionCommands {
             Self::Update(_) => {}
             Self::Upgrade(_) => {}
             Self::Publish(_) => {}
-            Self::WasmEncode(_) => {}
-            Self::WasmDecode(_) => {}
+            Self::Encode(cmd) => {
+                cmd.run(args).await?
+            }
+            Self::Decode(_) => {}
         }
         Ok(())
     }
