@@ -13,7 +13,7 @@ pub struct LegionCLI {
     command: Option<LegionCommands>,
 }
 /// Legion global options
-#[derive(Args)]
+#[derive(Debug, Args)]
 pub struct LegionOptions {
     /// Timing Tracing Debugging
     ///

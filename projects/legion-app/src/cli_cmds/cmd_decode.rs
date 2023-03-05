@@ -1,4 +1,4 @@
-use tokio::io::BufWriter;
+
 use super::*;
 use wasmprinter::{Config, PrintFmtWrite, PrintIoWrite, print_file};
 

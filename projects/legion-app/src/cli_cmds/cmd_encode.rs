@@ -1,4 +1,5 @@
 use super::*;
+use wat::GenerateDwarf;
 
 #[derive(Parser)]
 #[command(about, long_about = None)]

@@ -3,12 +3,11 @@ use clap::{Parser, Subcommand};
 use std::path::{Path, PathBuf};
 use tokio::{
     fs::{File, create_dir_all},
-    io::AsyncWriteExt,
+    io::{AsyncWriteExt, BufWriter},
 };
 use url::Url;
-use wat::GenerateDwarf;
-use crate::cli_cmds::cmd_decode::DecodeCommand;
-use crate::cli_cmds::cmd_encode::EncodeCommand;
+
+use crate::cli_cmds::{cmd_decode::DecodeCommand, cmd_encode::EncodeCommand};
 
 pub mod cmd_add;
 pub mod cmd_decode;
@@ -49,10 +48,8 @@ impl LegionCommands {
             Self::Update(_) => {}
             Self::Upgrade(_) => {}
             Self::Publish(_) => {}
-            Self::Encode(cmd) => {
-                cmd.run(args).await?
-            }
-            Self::Decode(_) => {}
+            Self::Encode(cmd) => cmd.run(args).await?,
+            Self::Decode(cmd) => cmd.run(args).await?,
         }
         Ok(())
     }

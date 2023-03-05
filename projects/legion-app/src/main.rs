@@ -1,7 +1,15 @@
-use clap::Parser;
+use clap::{Error, Parser};
 use legion::LegionCLI;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    LegionCLI::parse().run().await
+async fn main() {
+    match LegionCLI::try_parse() {
+        Ok(cli) => match cli.run().await {
+            Ok(_) => {}
+            Err(e) => {
+                eprintln!("{e}")
+            }
+        },
+        Err(e) => {}
+    }
 }
