@@ -2,10 +2,10 @@ use crate::{AddCommand, InstallCommand, LegionOptions, NewCommand, helpers::ensu
 use clap::{Parser, Subcommand};
 use std::path::{Path, PathBuf};
 use tokio::{
-    fs::{File, create_dir_all},
-    io::{AsyncWriteExt, BufWriter},
+    fs::{File},
+    io::{AsyncWriteExt},
 };
-use url::Url;
+
 
 use crate::cli_cmds::{cmd_decode::DecodeCommand, cmd_encode::EncodeCommand};
 

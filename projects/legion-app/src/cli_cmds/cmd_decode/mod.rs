@@ -1,6 +1,9 @@
-
 use super::*;
-use wasmprinter::{Config, PrintFmtWrite, PrintIoWrite, print_file};
+use std::io::Sink;
+use wasmprinter::{PrintFmtWrite, PrintIoWrite};
+
+#[cfg(test)]
+mod tests;
 
 #[derive(Parser)]
 #[command(about, long_about = None)]
@@ -56,7 +59,7 @@ impl DecodeCommand {
         let input_path = Path::new(&self.input);
         let input = tokio::fs::read(input_path).await?;
         let mut parser = wasmprinter::Config::new();
-        parser.print_offsets(true);
+        parser.print_offsets(false);
         parser.print_skeleton(self.skeleton);
         parser.name_unnamed(self.name_unnamed);
         parser.fold_instructions(self.fold_instructions);
@@ -64,10 +67,15 @@ impl DecodeCommand {
         if self.print {
             let mut dst = String::new();
             parser.print(&input, &mut PrintFmtWrite(&mut dst))?;
+            println!("{}", dst)
         }
 
         let output = self.make_output_name(input_path).await?;
-        if !self.dry_run {
+        if self.dry_run {
+            let mut file = Sink::default();
+            parser.print(&input, &mut PrintIoWrite(&mut file))?
+        }
+        else {
             let mut file = std::io::BufWriter::new(std::fs::File::create(output)?);
             parser.print(&input, &mut PrintIoWrite(&mut file))?
         }
@@ -76,7 +84,7 @@ impl DecodeCommand {
 
     async fn make_output_name(&self, input: &Path) -> anyhow::Result<PathBuf> {
         match self.output.as_ref() {
-            None => Ok(input.with_extension("wasm")),
+            None => Ok(input.with_extension("wat")),
             Some(s) => {
                 let path = PathBuf::from(s);
                 ensure_parent(&path).await?;

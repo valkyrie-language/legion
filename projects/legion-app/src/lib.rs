@@ -2,7 +2,10 @@ mod cli_cmds;
 mod helpers;
 
 use clap::{Args, Parser, Subcommand};
-pub use cli_cmds::{LegionCommands, cmd_add::AddCommand, cmd_install::InstallCommand, cmd_new::NewCommand};
+pub use cli_cmds::{
+    LegionCommands, cmd_add::AddCommand, cmd_decode::DecodeCommand, cmd_encode::EncodeCommand, cmd_install::InstallCommand,
+    cmd_new::NewCommand,
+};
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 #[command(arg_required_else_help = true)]
