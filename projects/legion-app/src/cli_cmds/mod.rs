@@ -8,12 +8,16 @@ use tokio::{
 
 
 use crate::cli_cmds::{cmd_decode::DecodeCommand, cmd_encode::EncodeCommand};
+use crate::cli_cmds::cmd_run::RunCommand;
 
+pub mod cmd_run;
 pub mod cmd_add;
 pub mod cmd_decode;
 pub mod cmd_encode;
 pub mod cmd_install;
 pub mod cmd_new;
+pub mod cmd_build;
+
 #[derive(Subcommand)]
 pub enum LegionCommands {
     #[command(aliases = ["initialization", "init"])]
@@ -21,6 +25,8 @@ pub enum LegionCommands {
     /// add to local
     #[command(short_flag = 'a')]
     Add(AddCommand),
+    #[command(short_flag = 'r')]
+    Run(RunCommand),
     Clone(NewCommand),
     /// Encode wat to wasm
     Encode(EncodeCommand),

@@ -18,7 +18,7 @@ impl ValorWorkspace {}
 
 impl Default for ValorWorkspace {
     fn default() -> Self {
-        Self { root: PathBuf::from("<<MISSING>>"), include: vec![], packages: vec![], template: Default::default() }
+        Self { root: PathBuf::from("<<MISSING>>"), packages: vec![], template: Default::default() }
     }
 }
 
@@ -56,7 +56,7 @@ impl<'de, 'body> Visitor<'de> for WorkspaceVisitor<'body> {
         while let Some(key) = map.next_key::<&str>()? {
             match key {
                 "include" => {
-                    self.body.include = map.next_value::<OneOrMany<String>>()?.unwrap();
+                    // self.body.include = map.next_value::<OneOrMany<String>>()?.unwrap();
                 }
                 "exclude" => {
                     self.body.packages = map.next_value::<OneOrMany<String>>()?.unwrap();
