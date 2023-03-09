@@ -21,28 +21,37 @@ pub struct RunCommand {
 
 impl RunCommand {
     pub async fn run(&self, args: &LegionOptions) -> anyhow::Result<()> {
-        // single file wasm
-        if self.input.ends_with(".wasm") {
-            let mut parser = wat::Parser::new();
-            parser.generate_dwarf(GenerateDwarf::Full);
-            let wasm_bytes = parser.parse_file(&self.input)?;
-            self.run_wasm(&wasm_bytes).await?;
-        }
-        // simple file wat
-        else if self.input.ends_with(".wat") {
-            let mut parser = wat::Parser::new();
-            parser.generate_dwarf(GenerateDwarf::Full);
-            let wasm_bytes = parser.parse_file(&self.input)?;
-            self.run_wasm(&wasm_bytes).await?;
-        }
-        // simple file valkyrie
-        else if self.input.ends_with(".valkyrie") {
-        }
-        // simple file valkyrie
-        else if self.input.ends_with(".vk") {
-        }
-        // run dir project
-        else if self.input.ends_with("/") {
+        match self.input.as_ref() {
+            // single file wasm
+            Some(s) if s.ends_with(".wasm") => {
+                let mut parser = wat::Parser::new();
+                parser.generate_dwarf(GenerateDwarf::Full);
+                let wasm_bytes = parser.parse_file(s)?;
+                self.run_wasm(&wasm_bytes).await?;
+            },
+            // simple file wat
+            Some(s) if s.ends_with(".wat") => {
+                let mut parser = wat::Parser::new();
+                parser.generate_dwarf(GenerateDwarf::Full);
+                let wasm_bytes = parser.parse_file(s)?;
+                self.run_wasm(&wasm_bytes).await?;
+            },
+            // simple file valkyrie
+            Some(s) if s.ends_with(".valkyrie") => {
+            },
+            // simple file valkyrie
+            Some(s) if s.ends_with(".vk") => {
+            },
+            // run dir project
+            Some(s) if s.ends_with("/") => {
+            },
+            // other case
+            Some(s) => {
+
+            }
+            None => {
+                println!("run with current workspace")
+            }
         }
         Ok(())
     }
