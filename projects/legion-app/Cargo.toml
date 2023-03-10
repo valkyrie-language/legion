@@ -15,11 +15,21 @@ clap = { version = "4.5.23", features = ["derive"] }
 url = "2.5.4"
 wat = { version = "1.222.0", features = ["component-model", "dwarf"] }
 wasmprinter = { version = "0.222.0", features = ["component-model"] }
-wasmtime = { version = "28.0.0", features = ["component-model"] }
-wasmtime-wasi = { version = "28.0.0", default-features = false }
 tokio = { workspace = true }
 reqwest = { workspace = true }
 
+
+[dependencies.wasmtime]
+version = "28.0.0"
+default-features = false
+features = [
+    "cranelift",
+    "gc-drc",
+    "component-model",
+]
+[dependencies.wasmtime-wasi]
+version = "28.0.0"
+default-features = false
 
 
 [dev-dependencies]
