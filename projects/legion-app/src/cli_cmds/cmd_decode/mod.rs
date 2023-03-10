@@ -1,4 +1,6 @@
 use super::*;
+use crate::helpers::arg_io::InputOutputArgs;
+use js_component_bindgen::{BindingsMode, InstantiationMode, TranspileOpts, transpile};
 use std::io::Sink;
 use wasmprinter::{PrintFmtWrite, PrintIoWrite};
 
@@ -52,10 +54,16 @@ pub struct DecodeCommand {
     /// dry run
     #[arg(long)]
     dry_run: bool,
+
+    #[arg(long)]
+    js: bool,
 }
 
 impl DecodeCommand {
     pub async fn run(&self, args: &LegionOptions) -> anyhow::Result<()> {
+        if self.js { self.transpile(args).await } else { self.decode(args).await }
+    }
+    pub async fn decode(&self, args: &LegionOptions) -> anyhow::Result<()> {
         let input_path = Path::new(&self.input);
         let input = tokio::fs::read(input_path).await?;
         let mut parser = wasmprinter::Config::new();
@@ -81,6 +89,39 @@ impl DecodeCommand {
         }
         Ok(())
     }
+    pub async fn transpile(&self, args: &LegionOptions) -> anyhow::Result<()> {
+        let input_path = Path::new(&self.input);
+        let input = tokio::fs::read(input_path).await?;
+        let cfg = TranspileOpts {
+            name: "index".to_string(),
+            no_typescript: false,
+            instantiation: Some(InstantiationMode::Async),
+            import_bindings: Some(BindingsMode::Js),
+            map: None,
+            no_nodejs_compat: false,
+            base64_cutoff: 0,
+            tla_compat: true,
+            valid_lifting_optimization: false,
+            tracing: false,
+            no_namespaced_exports: true,
+            multi_memory: true,
+        };
+        let result = transpile(&input, cfg)?;
+
+        let output = self.make_output_dir(input_path).await?;
+        for (path, bytes) in result.files {
+            let path = output.join(path);
+            ensure_parent(&path).await?;
+            if self.dry_run {
+            }
+            else {
+                let mut file = tokio::fs::File::create(path).await?;
+                file.write_all(&bytes).await?;
+            }
+        }
+
+        Ok(())
+    }
 
     async fn make_output_name(&self, input: &Path) -> anyhow::Result<PathBuf> {
         match self.output.as_ref() {
@@ -91,5 +132,33 @@ impl DecodeCommand {
                 Ok(path)
             }
         }
+    }
+    async fn make_output_dir(&self, input: &Path) -> anyhow::Result<PathBuf> {
+        match self.output.as_ref() {
+            None => {
+                let parent = parent_path(input)?;
+                match input.file_stem().and_then(|s| s.to_str()) {
+                    Some(s) => Ok(parent.join(s)),
+                    None => Err(anyhow::anyhow!("Invalid file name")),
+                }
+            }
+            Some(s) => {
+                let path = PathBuf::from(s);
+                if path.is_dir() {
+                    ensure_parent(&path).await?;
+                    Ok(path)
+                }
+                else {
+                    Ok(parent_path(&path)?.to_path_buf())
+                }
+            }
+        }
+    }
+}
+
+pub fn parent_path(path: &Path) -> anyhow::Result<&Path> {
+    match path.parent() {
+        Some(s) => Ok(s),
+        None => Err(anyhow::anyhow!("No parent directory for file")),
     }
 }
