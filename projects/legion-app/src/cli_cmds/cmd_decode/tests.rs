@@ -5,8 +5,7 @@ use js_component_bindgen::transpile;
 #[tokio::test]
 async fn decode() -> anyhow::Result<()> {
     let cmd = DecodeCommand {
-        input: project_path("src/cli_cmds/cmd_decode/decode_component.wasm"),
-        output: None,
+        io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "decode_component.wasm", ""),
         skeleton: false,
         name_unnamed: false,
         fold_instructions: false,
@@ -17,8 +16,7 @@ async fn decode() -> anyhow::Result<()> {
     cmd.decode(&LegionOptions { timing: 0, yes: false }).await?;
 
     let cmd = DecodeCommand {
-        input: project_path("src/cli_cmds/cmd_decode/decode_component.wasm"),
-        output: Some(project_path("src/cli_cmds/cmd_decode/decode_component_skeleton.wat")),
+        io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "decode_component.wasm", "decode_component_skeleton.wat"),
         skeleton: true,
         name_unnamed: false,
         fold_instructions: false,
@@ -29,8 +27,7 @@ async fn decode() -> anyhow::Result<()> {
     cmd.decode(&LegionOptions { timing: 0, yes: false }).await?;
 
     let cmd = DecodeCommand {
-        input: project_path("src/cli_cmds/cmd_decode/decode_component.wasm"),
-        output: Some(project_path("src/cli_cmds/cmd_decode/decode_component_fold.wat")),
+        io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "decode_component.wasm", "decode_component_fold.wat"),
         skeleton: false,
         name_unnamed: false,
         fold_instructions: true,
@@ -46,8 +43,7 @@ async fn decode() -> anyhow::Result<()> {
 #[tokio::test]
 async fn decode2() -> anyhow::Result<()> {
     let cmd = DecodeCommand {
-        input: project_path("src/cli_cmds/cmd_decode/decode_component.wasm"),
-        output: None,
+        io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "decode_component.wasm", ""),
         skeleton: false,
         name_unnamed: false,
         fold_instructions: false,

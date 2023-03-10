@@ -18,3 +18,9 @@ pub fn project_path(relative: &str) -> String {
     let here = Path::new(env!("CARGO_MANIFEST_DIR"));
     here.join(relative).to_string_lossy().to_string()
 }
+pub fn parent_path(path: &Path) -> anyhow::Result<&Path> {
+    match path.parent() {
+        Some(s) => Ok(s),
+        None => Err(anyhow::anyhow!("No parent directory for file")),
+    }
+}

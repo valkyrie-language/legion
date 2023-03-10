@@ -51,9 +51,9 @@ export function instantiate(getCoreModule, imports, instantiateCore = WebAssembl
   const module0 = getCoreModule('index.core.wasm');
   const module1 = getCoreModule('index.core2.wasm');
   
-  const { getStdout } = imports['wasi:cli/stdout'];
-  const { Error: Error$1 } = imports['wasi:io/error'];
-  const { OutputStream } = imports['wasi:io/streams'];
+  const { getStdout } = imports['@bytecodealliance/preview2-shim/cli/stdout'];
+  const { Error: Error$1 } = imports['@bytecodealliance/preview2-shim/io/error'];
+  const { OutputStream } = imports['@bytecodealliance/preview2-shim/io/streams'];
   let gen = (function* init () {
     let exports0;
     let memory0;
