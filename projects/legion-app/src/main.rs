@@ -1,4 +1,4 @@
-use clap::{Error, Parser};
+use clap::{ Parser};
 use legion::LegionCLI;
 
 #[tokio::main]
@@ -10,6 +10,8 @@ async fn main() {
                 eprintln!("{e}")
             }
         },
-        Err(e) => {}
+        Err(e) => {
+            eprintln!("{e}")
+        }
     }
 }

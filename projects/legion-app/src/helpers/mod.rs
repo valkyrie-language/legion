@@ -10,3 +10,9 @@ pub async fn ensure_parent(path: &Path) -> anyhow::Result<()> {
     }
     Ok(())
 }
+
+#[cfg(test)]
+pub fn project_path(relative: &str) -> String {
+    let here = Path::new(env!("CARGO_MANIFEST_DIR"));
+    here.join(relative).to_string_lossy().to_string()
+}

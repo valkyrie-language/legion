@@ -1,22 +1,17 @@
 use crate::{AddCommand, InstallCommand, LegionOptions, NewCommand, helpers::ensure_parent};
 use clap::{Parser, Subcommand};
 use std::path::{Path, PathBuf};
-use tokio::{
-    fs::{File},
-    io::{AsyncWriteExt},
-};
+use tokio::{fs::File, io::AsyncWriteExt};
 
+use crate::cli_cmds::{cmd_decode::DecodeCommand, cmd_encode::EncodeCommand, cmd_run::ExecuteCommand};
 
-use crate::cli_cmds::{cmd_decode::DecodeCommand, cmd_encode::EncodeCommand};
-use crate::cli_cmds::cmd_run::RunCommand;
-
-pub mod cmd_run;
 pub mod cmd_add;
+pub mod cmd_build;
 pub mod cmd_decode;
 pub mod cmd_encode;
 pub mod cmd_install;
 pub mod cmd_new;
-pub mod cmd_build;
+pub mod cmd_run;
 
 #[derive(Subcommand)]
 pub enum LegionCommands {
@@ -25,8 +20,9 @@ pub enum LegionCommands {
     /// add to local
     #[command(short_flag = 'a')]
     Add(AddCommand),
-    #[command(short_flag = 'r')]
-    Run(RunCommand),
+    /// Execute script or command
+    #[command(short_flag = 'e', aliases = ["exe", "exec"])]
+    Execute(ExecuteCommand),
     Clone(NewCommand),
     /// Encode wat to wasm
     Encode(EncodeCommand),
@@ -47,15 +43,16 @@ pub enum LegionCommands {
 impl LegionCommands {
     pub async fn run(&self, args: &LegionOptions) -> anyhow::Result<()> {
         match self {
-            Self::New(_) => {}
-            Self::Add(_) => {}
-            Self::Clone(_) => {}
-            Self::Install(_) => {}
-            Self::Update(_) => {}
-            Self::Upgrade(_) => {}
-            Self::Publish(_) => {}
+            Self::New(cmd) => cmd.run(args).await?,
+            Self::Add(cmd) => cmd.run(args).await?,
+            Self::Clone(cmd) => cmd.run(args).await?,
+            Self::Install(cmd) => cmd.run(args).await?,
+            Self::Update(cmd) => cmd.run(args).await?,
+            Self::Upgrade(cmd) => cmd.run(args).await?,
+            Self::Publish(cmd) => cmd.run(args).await?,
             Self::Encode(cmd) => cmd.run(args).await?,
             Self::Decode(cmd) => cmd.run(args).await?,
+            Self::Execute(cmd) => cmd.run(args).await?,
         }
         Ok(())
     }

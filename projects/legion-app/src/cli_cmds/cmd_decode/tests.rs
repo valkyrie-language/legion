@@ -1,11 +1,10 @@
+use crate::helpers::project_path;
 use super::*;
 
 #[tokio::test]
 async fn decode() -> anyhow::Result<()> {
-    let mut here = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let input = here.join("src/cli_cmds/cmd_decode/decode_component.wasm");
     let cmd = DecodeCommand {
-        input: input.to_string_lossy().to_string(),
+        input: project_path("src/cli_cmds/cmd_decode/decode_component.wasm"),
         output: None,
         skeleton: false,
         name_unnamed: false,
@@ -16,8 +15,8 @@ async fn decode() -> anyhow::Result<()> {
     cmd.run(&LegionOptions { timing: 0, yes: false }).await?;
 
     let cmd = DecodeCommand {
-        input: input.to_string_lossy().to_string(),
-        output: Some(input.with_file_name("decode_component_skeleton.wat").to_string_lossy().to_string()),
+        input: project_path("src/cli_cmds/cmd_decode/decode_component.wasm"),
+        output: Some(project_path("src/cli_cmds/cmd_decode/decode_component_skeleton.wat")),
         skeleton: true,
         name_unnamed: false,
         fold_instructions: false,
@@ -27,8 +26,8 @@ async fn decode() -> anyhow::Result<()> {
     cmd.run(&LegionOptions { timing: 0, yes: false }).await?;
 
     let cmd = DecodeCommand {
-        input: input.to_string_lossy().to_string(),
-        output: Some(input.with_file_name("decode_component_fold.wat").to_string_lossy().to_string()),
+        input: project_path("src/cli_cmds/cmd_decode/decode_component.wasm"),
+        output: Some(project_path("src/cli_cmds/cmd_decode/decode_component_fold.wat")),
         skeleton: false,
         name_unnamed: false,
         fold_instructions: true,

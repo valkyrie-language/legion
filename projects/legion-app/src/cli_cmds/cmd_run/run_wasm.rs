@@ -2,10 +2,10 @@ use super::*;
 
 use wasmtime::{
     Config, Engine, Store,
-    component::{Component, Instance, Linker, ResourceTable},
+    component::{Component,  Linker, ResourceTable},
 };
-use wasmtime_wasi::{AsyncStdoutStream, Stdout, WasiCtx, WasiView, add_to_linker_async};
-use wat::{GenerateDwarf, Parser};
+use wasmtime_wasi::{  WasiCtx, WasiView, add_to_linker_async};
+
 
 pub struct LegionView {
     table: ResourceTable,
@@ -31,7 +31,7 @@ impl WasiView for LegionView {
     }
 }
 
-impl RunCommand {
+impl ExecuteCommand {
     pub async fn run_wasm(&self, bytes: &[u8]) -> anyhow::Result<()> {
         let mut config = Config::new();
         config
