@@ -1,12 +1,12 @@
+use std::fs::create_dir_all;
 use std::path::Path;
-use tokio::fs::create_dir_all;
 
 pub mod arg_io;
 
 pub async fn ensure_parent(path: &Path) -> anyhow::Result<()> {
     match path.parent() {
         Some(s) if !s.exists() => {
-            create_dir_all(s).await?;
+            create_dir_all(s)?;
         }
         _ => {}
     }

@@ -16,6 +16,19 @@ async fn decode() -> anyhow::Result<()> {
     cmd.decode(&LegionOptions { timing: 0, yes: false }).await?;
 
     let cmd = DecodeCommand {
+        io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "encode_component.wasm", ""),
+        skeleton: false,
+        name_unnamed: false,
+        fold_instructions: false,
+        print: false,
+        dry_run: false,
+        js: false,
+    };
+    cmd.decode(&LegionOptions { timing: 0, yes: false }).await?;
+
+
+
+    let cmd = DecodeCommand {
         io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "decode_component.wasm", "decode_component_skeleton.wat"),
         skeleton: true,
         name_unnamed: false,

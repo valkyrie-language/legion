@@ -1,3 +1,4 @@
+
 use super::*;
 use wat::GenerateDwarf;
 
@@ -29,8 +30,8 @@ impl EncodeCommand {
         let wasm_bytes = parser.parse_file(input)?;
         let output = self.make_output_name(input).await?;
         if !self.dry_run {
-            let mut wasm = File::create(output).await?;
-            wasm.write_all(&wasm_bytes).await?;
+            let mut wasm = File::create(output)?;
+            wasm.write_all(&wasm_bytes)?;
         }
         Ok(())
     }

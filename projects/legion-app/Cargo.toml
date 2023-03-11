@@ -20,17 +20,7 @@ tokio = { workspace = true }
 reqwest = { workspace = true }
 
 
-[dependencies.wasmtime]
-version = "28.0.0"
-default-features = false
-features = [
-    "cranelift",
-    "gc-drc",
-    "component-model",
-]
-[dependencies.wasmtime-wasi]
-version = "28.0.0"
-default-features = false
+
 
 
 [dev-dependencies]

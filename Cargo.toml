@@ -3,7 +3,7 @@ resolver = "2"
 members = ["projects/*"]
 default-members = [
     "projects/legion-app",
-    "projects/legion-config",
+#    "projects/legion-config",
 ]
 exclude = [
     "projects/.DS_Store",
@@ -15,9 +15,22 @@ panic = "abort"
 
 [workspace.dependencies.tokio]
 version = "1.42.0"
-features = ["full"]
+default-features = true
+features = ["macros", "rt"]
 
 [workspace.dependencies.reqwest]
 version = "0.12.9"
 default-features = false
 features = ["rustls-tls", "json", "socks"]
+
+#[workspace.dependencies.wasmtime]
+#version = "28.0.0"
+#default-features = false
+#features = [
+#    "cranelift",
+#    "gc-drc",
+#    "component-model",
+#]
+#[workspace.dependencies.wasmtime-wasi]
+#version = "28.0.0"
+#default-features = false

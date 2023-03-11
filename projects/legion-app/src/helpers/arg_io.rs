@@ -34,10 +34,10 @@ impl InputOutputArgs {
         }
     }
     pub async fn get_input_bytes(&self) -> anyhow::Result<Vec<u8>> {
-        Ok(tokio::fs::read(&self.input).await?)
+        Ok(std::fs::read(&self.input)?)
     }
     pub async fn get_input_text(&self) -> anyhow::Result<String> {
-        Ok(tokio::fs::read_to_string(&self.input).await?)
+        Ok(std::fs::read_to_string(&self.input)?)
     }
     pub fn output_or_extension(&self, ext: &str) -> anyhow::Result<PathBuf> {
         match self.output.as_ref() {

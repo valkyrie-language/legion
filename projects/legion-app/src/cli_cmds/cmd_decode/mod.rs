@@ -1,7 +1,6 @@
 use super::*;
 use crate::helpers::arg_io::InputOutputArgs;
 use js_component_bindgen::{BindingsMode, InstantiationMode, TranspileOpts, transpile};
-use std::{collections::HashMap, io::Sink};
 use wasmprinter::{PrintFmtWrite, PrintIoWrite};
 
 #[cfg(test)]
@@ -112,8 +111,8 @@ impl DecodeCommand {
             if self.dry_run {
             }
             else {
-                let mut file = tokio::fs::File::create(path).await?;
-                file.write_all(&bytes).await?;
+                let mut file = std::fs::File::create(path)?;
+                file.write_all(&bytes)?;
             }
         }
 
