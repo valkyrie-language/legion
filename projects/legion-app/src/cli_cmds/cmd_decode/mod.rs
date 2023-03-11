@@ -14,7 +14,7 @@ pub struct DecodeCommand {
     /// Whether or not to print only a "skeleton" which skips function bodies,
     /// data segment contents, element segment contents, etc.
     #[arg(long)]
-    skeleton: bool,
+    skeleton_only: bool,
     /// Assign names to all unnamed items.
     ///
     /// If enabled then any previously unnamed item will have a name synthesized
@@ -63,7 +63,7 @@ impl DecodeCommand {
         let input = self.io.get_input_bytes().await?;
         let mut parser = wasmprinter::Config::new();
         parser.print_offsets(false);
-        parser.print_skeleton(self.skeleton);
+        parser.print_skeleton(self.skeleton_only);
         parser.name_unnamed(self.name_unnamed);
         parser.fold_instructions(self.fold_instructions);
 

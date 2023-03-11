@@ -6,7 +6,7 @@ use js_component_bindgen::transpile;
 async fn decode() -> anyhow::Result<()> {
     let cmd = DecodeCommand {
         io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "decode_component.wasm", ""),
-        skeleton: false,
+        skeleton_only: false,
         name_unnamed: false,
         fold_instructions: false,
         print: false,
@@ -17,7 +17,7 @@ async fn decode() -> anyhow::Result<()> {
 
     let cmd = DecodeCommand {
         io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "encode_component.wasm", ""),
-        skeleton: false,
+        skeleton_only: false,
         name_unnamed: false,
         fold_instructions: false,
         print: false,
@@ -30,7 +30,7 @@ async fn decode() -> anyhow::Result<()> {
 
     let cmd = DecodeCommand {
         io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "decode_component.wasm", "decode_component_skeleton.wat"),
-        skeleton: true,
+        skeleton_only: true,
         name_unnamed: false,
         fold_instructions: false,
         print: false,
@@ -41,7 +41,7 @@ async fn decode() -> anyhow::Result<()> {
 
     let cmd = DecodeCommand {
         io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "decode_component.wasm", "decode_component_fold.wat"),
-        skeleton: false,
+        skeleton_only: false,
         name_unnamed: false,
         fold_instructions: true,
         print: false,
@@ -57,7 +57,7 @@ async fn decode() -> anyhow::Result<()> {
 async fn decode2() -> anyhow::Result<()> {
     let cmd = DecodeCommand {
         io: InputOutputArgs::test_output("src/cli_cmds/cmd_decode", "decode_component.wasm", ""),
-        skeleton: false,
+        skeleton_only: false,
         name_unnamed: false,
         fold_instructions: false,
         print: false,

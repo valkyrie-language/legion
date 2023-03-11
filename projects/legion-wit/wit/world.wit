@@ -1,0 +1,12 @@
+package v:legion;
+
+world tools {
+    record encode-config {
+        generate-dwarf: bool
+    }
+    record decode-config {
+        skeleton-only: bool
+    }
+    export encode-wasm: func(s: string, config: encode-config) -> result<list<u8>>;
+    export decode-wasm: func(s: list<u8>, config: decode-config) -> result<string>;
+}

@@ -27,3 +27,6 @@ reqwest = { workspace = true }
 
 [features]
 default = []
+
+[package.metadata.component]
+package = "component:example"
