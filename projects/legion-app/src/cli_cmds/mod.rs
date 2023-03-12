@@ -1,10 +1,15 @@
-use crate::{AddCommand, InstallCommand, LegionOptions, NewCommand, helpers::ensure_parent};
+use crate::{
+    AddCommand, InstallCommand, LegionOptions, NewCommand,
+    cli_cmds::{cmd_decode::DecodeCommand, cmd_run::ExecuteCommand},
+    helpers::ensure_parent,
+};
 use clap::{Parser, Subcommand};
-use std::path::{Path, PathBuf};
-use std::{collections::HashMap, io::Sink};
-use std::io::Write;
-use crate::cli_cmds::{cmd_decode::DecodeCommand, cmd_encode::EncodeCommand, cmd_run::ExecuteCommand};
-use std::fs::File;
+use std::{
+    collections::HashMap,
+    fs::File,
+    io::{Sink, Write},
+    path::{Path, PathBuf},
+};
 pub mod cmd_add;
 pub mod cmd_build;
 pub mod cmd_decode;
@@ -24,8 +29,6 @@ pub enum LegionCommands {
     #[command(short_flag = 'e', aliases = ["exe", "exec"])]
     Execute(ExecuteCommand),
     Clone(NewCommand),
-    /// Encode wat to wasm
-    Encode(EncodeCommand),
     /// Decode wasm to wat
     Decode(DecodeCommand),
     /// add to global
@@ -50,7 +53,6 @@ impl LegionCommands {
             Self::Update(cmd) => cmd.run(args).await?,
             Self::Upgrade(cmd) => cmd.run(args).await?,
             Self::Publish(cmd) => cmd.run(args).await?,
-            Self::Encode(cmd) => cmd.run(args).await?,
             Self::Decode(cmd) => cmd.run(args).await?,
             Self::Execute(cmd) => cmd.run(args).await?,
         }

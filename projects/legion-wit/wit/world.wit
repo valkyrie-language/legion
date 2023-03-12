@@ -1,12 +1,17 @@
-package v:legion;
+package legion:tools;
 
 world tools {
+	record tools-error {
+		message: string
+	}
     record encode-config {
         generate-dwarf: bool
     }
     record decode-config {
-        skeleton-only: bool
+        skeleton-only: bool,
+        name-unnamed: bool,
+        fold-instructions: bool
     }
-    export encode-wasm: func(s: string, config: encode-config) -> result<list<u8>>;
-    export decode-wasm: func(s: list<u8>, config: decode-config) -> result<string>;
+    export encode-wasm: func(input: string, config: encode-config) -> result<list<u8>, tools-error>;
+    export decode-wasm: func(input: list<u8>, config: decode-config) -> result<string, tools-error>;
 }

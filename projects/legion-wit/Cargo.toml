@@ -13,8 +13,8 @@ edition = "2021"
 #anyhow = "1.0.94"
 #clap = { version = "4.5.23", features = ["derive"] }
 #url = "2.5.4"
-#wat = { version = "1.222.0", features = ["component-model", "dwarf"] }
-#wasmprinter = { version = "0.222.0", features = ["component-model"] }
+wat = { version = "1.222.0", features = ["component-model", "dwarf"] }
+wasmprinter = { version = "0.222.0", features = ["component-model"] }
 #js-component-bindgen = "1.8.1"
 #tokio = { workspace = true }
 #reqwest = { workspace = true }
@@ -31,4 +31,4 @@ crate-type = ["cdylib"]
 default = []
 
 [package.metadata.component]
-package = "valkyrie:tools"
+package = "legion:tools"

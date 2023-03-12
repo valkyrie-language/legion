@@ -3,7 +3,7 @@ mod helpers;
 
 use clap::{Args, Parser, Subcommand};
 pub use cli_cmds::{
-    LegionCommands, cmd_add::AddCommand, cmd_decode::DecodeCommand, cmd_encode::EncodeCommand, cmd_install::InstallCommand,
+    LegionCommands, cmd_add::AddCommand, cmd_decode::DecodeCommand,  cmd_install::InstallCommand,
     cmd_new::NewCommand,
 };
 #[derive(Parser)]
