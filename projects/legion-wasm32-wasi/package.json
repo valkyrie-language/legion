@@ -1,0 +1,30 @@
+{
+    "name": "@valkyrie-language/legion-wasm32-wasi",
+    "version": "0.0.2",
+    "license": "UNLICENSED",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/valkyrie-language/legion4npm.git",
+        "directory": "packages/legion-win32-x64"
+    },
+    "type": "module",
+    "main": "index.js",
+    "os": [
+        "win32"
+    ],
+    "cpu": [
+        "x64"
+    ],
+    "bin": {
+        "legion-win32-x64": "legion-win32-x64.exe"
+    },
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
+    "devDependencies": {
+        "@bytecodealliance/jco": "^1.8.1",
+        "@types/node": "^22",
+        "typescript": "^5.7.2"
+    }
+}

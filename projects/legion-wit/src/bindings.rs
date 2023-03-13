@@ -162,11 +162,11 @@ pub unsafe fn __post_return_decode_wasm<T: Guest>(arg0: *mut u8) {
 }
 pub trait Guest {
     fn encode_wasm(
-        s: _rt::String,
+        input: _rt::String,
         config: EncodeConfig,
     ) -> Result<_rt::Vec<u8>, ToolsError>;
     fn decode_wasm(
-        s: _rt::Vec<u8>,
+        input: _rt::Vec<u8>,
         config: DecodeConfig,
     ) -> Result<_rt::String, ToolsError>;
 }
@@ -258,16 +258,16 @@ pub(crate) use __export_tools_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.35.0:legion:tools:tools:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 369] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xf5\x01\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 377] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xfd\x01\x01A\x02\x01\
 A\x0d\x01r\x01\x07messages\x03\0\x0btools-error\x03\0\0\x01r\x01\x0egenerate-dwa\
 rf\x7f\x03\0\x0dencode-config\x03\0\x02\x01r\x03\x0dskeleton-only\x7f\x0cname-un\
 named\x7f\x11fold-instructions\x7f\x03\0\x0ddecode-config\x03\0\x04\x01p}\x01j\x01\
-\x06\x01\x01\x01@\x02\x01ss\x06config\x03\0\x07\x04\0\x0bencode-wasm\x01\x08\x01\
-j\x01s\x01\x01\x01@\x02\x01s\x06\x06config\x05\0\x09\x04\0\x0bdecode-wasm\x01\x0a\
-\x04\0\x12legion:tools/tools\x04\0\x0b\x0b\x01\0\x05tools\x03\0\0\0G\x09producer\
-s\x01\x0cprocessed-by\x02\x0dwit-component\x070.220.0\x10wit-bindgen-rust\x060.3\
-5.0";
+\x06\x01\x01\x01@\x02\x05inputs\x06config\x03\0\x07\x04\0\x0bencode-wasm\x01\x08\
+\x01j\x01s\x01\x01\x01@\x02\x05input\x06\x06config\x05\0\x09\x04\0\x0bdecode-was\
+m\x01\x0a\x04\0\x12legion:tools/tools\x04\0\x0b\x0b\x01\0\x05tools\x03\0\0\0G\x09\
+producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.220.0\x10wit-bindgen-rus\
+t\x060.35.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {
