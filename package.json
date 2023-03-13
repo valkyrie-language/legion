@@ -1,5 +1,8 @@
 {
     "private": true,
+    "workspaces": [
+        "projects/*"
+    ],
     "scripts": {
         "build": "cargo build --release",
         "test": "cargo test --release",
@@ -7,5 +10,10 @@
         "p": "git push && git push --tags --prune",
         "reset": "git reset Head~ --soft",
         "u": "cargo upgrade --workspace"
+    },
+    "devDependencies": {
+        "@bytecodealliance/jco": "^1.8.1",
+        "@types/node": "^22",
+        "typescript": "^5.7.2"
     }
 }

@@ -1,5 +1,5 @@
 {
-    "name": "@valkyrie-language/legion-wasm32-wasi",
+    "name": "@valkyrie-language/legion",
     "version": "0.0.0",
     "license": "UNLICENSED",
     "repository": {

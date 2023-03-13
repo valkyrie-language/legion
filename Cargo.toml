@@ -3,10 +3,11 @@ resolver = "2"
 members = ["projects/*"]
 default-members = [
     "projects/legion-app",
-#    "projects/legion-config",
+    "projects/legion-wit",
 ]
 exclude = [
     "projects/.DS_Store",
+    "projects/legion-wasm32-wasi"
 ]
 
 [profile.release]
