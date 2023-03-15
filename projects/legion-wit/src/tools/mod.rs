@@ -21,9 +21,10 @@ impl Guest for ToolsContext {
 
     fn wasm_decode(input: Vec<u8>, config: DecodeConfig) -> Result<String, ToolsError> {
         let mut parser = wasmprinter::Config::new();
+        parser.name_unnamed(true);
         parser.print_offsets(false);
         parser.print_skeleton(config.skeleton_only);
-        parser.name_unnamed(config.name_unnamed);
+        // parser.name_unnamed(config.indent_text);
         parser.fold_instructions(config.fold_instructions);
         let mut dst = String::new();
         parser.print(&input, &mut PrintFmtWrite(&mut dst))?;
@@ -44,9 +45,9 @@ impl Guest for ToolsContext {
             map: Some(map),
             no_nodejs_compat: false,
             base64_cutoff: 0,
-            tla_compat: true,
-            valid_lifting_optimization: false,
-            tracing: false,
+            tla_compat: false,
+            valid_lifting_optimization: !config.debug,
+            tracing: config.debug,
             no_namespaced_exports: true,
             multi_memory: true,
         };

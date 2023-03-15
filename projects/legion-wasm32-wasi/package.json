@@ -1,6 +1,6 @@
 {
     "name": "@valkyrie-language/legion-wasm32-wasi",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "UNLICENSED",
     "repository": {
         "type": "git",
@@ -14,6 +14,9 @@
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
+    },
+    "scripts": {
+        "build": "cargo component build --release --target wasm32-wasip2"
     },
     "dependencies": {
         "@bytecodealliance/preview2-shim": "^0.17.1"

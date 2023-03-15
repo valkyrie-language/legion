@@ -25,18 +25,17 @@ impl ::core::fmt::Debug for EncodeConfig {
             .finish()
     }
 }
-#[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct DecodeConfig {
     pub skeleton_only: bool,
-    pub name_unnamed: bool,
+    pub indent_text: _rt::String,
     pub fold_instructions: bool,
 }
 impl ::core::fmt::Debug for DecodeConfig {
     fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
         f.debug_struct("DecodeConfig")
             .field("skeleton-only", &self.skeleton_only)
-            .field("name-unnamed", &self.name_unnamed)
+            .field("indent-text", &self.indent_text)
             .field("fold-instructions", &self.fold_instructions)
             .finish()
     }
@@ -45,12 +44,14 @@ impl ::core::fmt::Debug for DecodeConfig {
 pub struct PolyfillConfig {
     pub name: _rt::String,
     pub shim: _rt::Vec<(_rt::String, _rt::String)>,
+    pub debug: bool,
 }
 impl ::core::fmt::Debug for PolyfillConfig {
     fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
         f.debug_struct("PolyfillConfig")
             .field("name", &self.name)
             .field("shim", &self.shim)
+            .field("debug", &self.debug)
             .finish()
     }
 }
@@ -119,42 +120,45 @@ pub unsafe fn _export_wasm_decode_cabi<T: Guest>(
     arg0: *mut u8,
     arg1: usize,
     arg2: i32,
-    arg3: i32,
-    arg4: i32,
+    arg3: *mut u8,
+    arg4: usize,
+    arg5: i32,
 ) -> *mut u8 {
     #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
     let len0 = arg1;
-    let result1 = T::wasm_decode(
+    let len1 = arg4;
+    let bytes1 = _rt::Vec::from_raw_parts(arg3.cast(), len1, len1);
+    let result2 = T::wasm_decode(
         _rt::Vec::from_raw_parts(arg0.cast(), len0, len0),
         DecodeConfig {
             skeleton_only: _rt::bool_lift(arg2 as u8),
-            name_unnamed: _rt::bool_lift(arg3 as u8),
-            fold_instructions: _rt::bool_lift(arg4 as u8),
+            indent_text: _rt::string_lift(bytes1),
+            fold_instructions: _rt::bool_lift(arg5 as u8),
         },
     );
-    let ptr2 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
-    match result1 {
+    let ptr3 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+    match result2 {
         Ok(e) => {
-            *ptr2.add(0).cast::<u8>() = (0i32) as u8;
-            let vec3 = (e.into_bytes()).into_boxed_slice();
-            let ptr3 = vec3.as_ptr().cast::<u8>();
-            let len3 = vec3.len();
-            ::core::mem::forget(vec3);
-            *ptr2.add(8).cast::<usize>() = len3;
-            *ptr2.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+            *ptr3.add(0).cast::<u8>() = (0i32) as u8;
+            let vec4 = (e.into_bytes()).into_boxed_slice();
+            let ptr4 = vec4.as_ptr().cast::<u8>();
+            let len4 = vec4.len();
+            ::core::mem::forget(vec4);
+            *ptr3.add(8).cast::<usize>() = len4;
+            *ptr3.add(4).cast::<*mut u8>() = ptr4.cast_mut();
         }
         Err(e) => {
-            *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-            let ToolsError { message: message4 } = e;
-            let vec5 = (message4.into_bytes()).into_boxed_slice();
-            let ptr5 = vec5.as_ptr().cast::<u8>();
-            let len5 = vec5.len();
-            ::core::mem::forget(vec5);
-            *ptr2.add(8).cast::<usize>() = len5;
-            *ptr2.add(4).cast::<*mut u8>() = ptr5.cast_mut();
+            *ptr3.add(0).cast::<u8>() = (1i32) as u8;
+            let ToolsError { message: message5 } = e;
+            let vec6 = (message5.into_bytes()).into_boxed_slice();
+            let ptr6 = vec6.as_ptr().cast::<u8>();
+            let len6 = vec6.len();
+            ::core::mem::forget(vec6);
+            *ptr3.add(8).cast::<usize>() = len6;
+            *ptr3.add(4).cast::<*mut u8>() = ptr6.cast_mut();
         }
     };
-    ptr2
+    ptr3
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
@@ -182,6 +186,7 @@ pub unsafe fn _export_wasi_polyfill_cabi<T: Guest>(
     arg3: usize,
     arg4: *mut u8,
     arg5: usize,
+    arg6: i32,
 ) -> *mut u8 {
     #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
     let len0 = arg1;
@@ -211,6 +216,7 @@ pub unsafe fn _export_wasi_polyfill_cabi<T: Guest>(
         PolyfillConfig {
             name: _rt::string_lift(bytes1),
             shim: result8,
+            debug: _rt::bool_lift(arg6 as u8),
         },
     );
     let ptr10 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
@@ -322,16 +328,17 @@ macro_rules! __export_world_tools_cabi {
         _post_return_wat_encode(arg0 : * mut u8,) { $($path_to_types)*::
         __post_return_wat_encode::<$ty > (arg0) } #[export_name = "wasm-decode"] unsafe
         extern "C" fn export_wasm_decode(arg0 : * mut u8, arg1 : usize, arg2 : i32, arg3
-        : i32, arg4 : i32,) -> * mut u8 { $($path_to_types)*::
-        _export_wasm_decode_cabi::<$ty > (arg0, arg1, arg2, arg3, arg4) } #[export_name =
-        "cabi_post_wasm-decode"] unsafe extern "C" fn _post_return_wasm_decode(arg0 : *
-        mut u8,) { $($path_to_types)*:: __post_return_wasm_decode::<$ty > (arg0) }
-        #[export_name = "wasi-polyfill"] unsafe extern "C" fn export_wasi_polyfill(arg0 :
-        * mut u8, arg1 : usize, arg2 : * mut u8, arg3 : usize, arg4 : * mut u8, arg5 :
-        usize,) -> * mut u8 { $($path_to_types)*:: _export_wasi_polyfill_cabi::<$ty >
-        (arg0, arg1, arg2, arg3, arg4, arg5) } #[export_name = "cabi_post_wasi-polyfill"]
-        unsafe extern "C" fn _post_return_wasi_polyfill(arg0 : * mut u8,) {
-        $($path_to_types)*:: __post_return_wasi_polyfill::<$ty > (arg0) } };
+        : * mut u8, arg4 : usize, arg5 : i32,) -> * mut u8 { $($path_to_types)*::
+        _export_wasm_decode_cabi::<$ty > (arg0, arg1, arg2, arg3, arg4, arg5) }
+        #[export_name = "cabi_post_wasm-decode"] unsafe extern "C" fn
+        _post_return_wasm_decode(arg0 : * mut u8,) { $($path_to_types)*::
+        __post_return_wasm_decode::<$ty > (arg0) } #[export_name = "wasi-polyfill"]
+        unsafe extern "C" fn export_wasi_polyfill(arg0 : * mut u8, arg1 : usize, arg2 : *
+        mut u8, arg3 : usize, arg4 : * mut u8, arg5 : usize, arg6 : i32,) -> * mut u8 {
+        $($path_to_types)*:: _export_wasi_polyfill_cabi::<$ty > (arg0, arg1, arg2, arg3,
+        arg4, arg5, arg6) } #[export_name = "cabi_post_wasi-polyfill"] unsafe extern "C"
+        fn _post_return_wasi_polyfill(arg0 : * mut u8,) { $($path_to_types)*::
+        __post_return_wasi_polyfill::<$ty > (arg0) } };
     };
 }
 #[doc(hidden)]
@@ -406,18 +413,18 @@ pub(crate) use __export_tools_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.35.0:legion:tools:tools:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 472] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xdc\x02\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 478] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe2\x02\x01A\x02\x01\
 A\x16\x01r\x01\x07messages\x03\0\x0btools-error\x03\0\0\x01r\x01\x0egenerate-dwa\
-rf\x7f\x03\0\x0dencode-config\x03\0\x02\x01r\x03\x0dskeleton-only\x7f\x0cname-un\
-named\x7f\x11fold-instructions\x7f\x03\0\x0ddecode-config\x03\0\x04\x01o\x02ss\x01\
-p\x06\x01r\x02\x04names\x04shim\x07\x03\0\x0fpolyfill-config\x03\0\x08\x01p}\x01\
-j\x01\x0a\x01\x01\x01@\x02\x05inputs\x06config\x03\0\x0b\x04\0\x0awat-encode\x01\
-\x0c\x01j\x01s\x01\x01\x01@\x02\x05input\x0a\x06config\x05\0\x0d\x04\0\x0bwasm-d\
-ecode\x01\x0e\x01o\x02s\x0a\x01p\x0f\x01j\x01\x10\x01\x01\x01@\x02\x05input\x0a\x06\
-config\x09\0\x11\x04\0\x0dwasi-polyfill\x01\x12\x04\0\x12legion:tools/tools\x04\0\
-\x0b\x0b\x01\0\x05tools\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-c\
-omponent\x070.220.0\x10wit-bindgen-rust\x060.35.0";
+rf\x7f\x03\0\x0dencode-config\x03\0\x02\x01r\x03\x0dskeleton-only\x7f\x0bindent-\
+texts\x11fold-instructions\x7f\x03\0\x0ddecode-config\x03\0\x04\x01o\x02ss\x01p\x06\
+\x01r\x03\x04names\x04shim\x07\x05debug\x7f\x03\0\x0fpolyfill-config\x03\0\x08\x01\
+p}\x01j\x01\x0a\x01\x01\x01@\x02\x05inputs\x06config\x03\0\x0b\x04\0\x0awat-enco\
+de\x01\x0c\x01j\x01s\x01\x01\x01@\x02\x05input\x0a\x06config\x05\0\x0d\x04\0\x0b\
+wasm-decode\x01\x0e\x01o\x02s\x0a\x01p\x0f\x01j\x01\x10\x01\x01\x01@\x02\x05inpu\
+t\x0a\x06config\x09\0\x11\x04\0\x0dwasi-polyfill\x01\x12\x04\0\x12legion:tools/t\
+ools\x04\0\x0b\x0b\x01\0\x05tools\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\
+\x0dwit-component\x070.220.0\x10wit-bindgen-rust\x060.35.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {
