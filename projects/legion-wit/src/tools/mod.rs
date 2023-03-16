@@ -1,8 +1,6 @@
 use crate::bindings::{self, DecodeConfig, EncodeConfig, Guest, PolyfillConfig, ToolsError, export};
 use js_component_bindgen::{BindingsMode, InstantiationMode, TranspileOpts};
-use std::{
-    collections::HashMap,
-};
+use std::collections::HashMap;
 use wasmprinter::PrintFmtWrite;
 use wat::GenerateDwarf;
 
@@ -34,13 +32,14 @@ impl Guest for ToolsContext {
     fn wasi_polyfill(input: Vec<u8>, config: PolyfillConfig) -> Result<Vec<(String, Vec<u8>)>, ToolsError> {
         let mut map = HashMap::default();
         map.insert("wasi:*".to_string(), "@bytecodealliance/preview2-shim/*".to_string());
+        map.insert("valkyrie:std-legacy/*".to_string(), "@valkyrie-language/std-legacy/*".to_string());
         for (k, v) in config.shim {
             map.insert(k, v);
         }
         let cfg = TranspileOpts {
             name: config.name,
             no_typescript: false,
-            instantiation: Some(InstantiationMode::Async),
+            instantiation: if config.instantiation { Some(InstantiationMode::Async) } else { None },
             import_bindings: Some(BindingsMode::Js),
             map: Some(map),
             no_nodejs_compat: false,
