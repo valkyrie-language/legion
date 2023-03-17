@@ -9,7 +9,7 @@ export!(ToolsContext with_types_in bindings);
 pub struct ToolsContext {}
 
 impl Guest for ToolsContext {
-    fn wat_encode(input: String, config: EncodeConfig) -> Result<Vec<u8>, ToolsError> {
+    fn wast_encode(input: String, config: EncodeConfig) -> Result<Vec<u8>, ToolsError> {
         let mut parser = wat::Parser::new();
         if config.generate_dwarf {
             parser.generate_dwarf(GenerateDwarf::Full);
@@ -22,6 +22,7 @@ impl Guest for ToolsContext {
         parser.name_unnamed(true);
         parser.print_offsets(false);
         parser.print_skeleton(config.skeleton_only);
+        parser.indent_text(config.indent_text);
         // parser.name_unnamed(config.indent_text);
         parser.fold_instructions(config.fold_instructions);
         let mut dst = String::new();
@@ -49,6 +50,7 @@ impl Guest for ToolsContext {
             tracing: config.debug,
             no_namespaced_exports: true,
             multi_memory: true,
+            guest: config.guest,
         };
         let result = js_component_bindgen::transpile(&input, cfg)?;
         Ok(result.files)

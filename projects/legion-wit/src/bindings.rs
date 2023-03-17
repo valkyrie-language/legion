@@ -28,6 +28,7 @@ impl ::core::fmt::Debug for EncodeConfig {
 #[derive(Clone)]
 pub struct DecodeConfig {
     pub skeleton_only: bool,
+    /// Config the string to use when indenting.
     pub indent_text: _rt::String,
     pub fold_instructions: bool,
 }
@@ -45,6 +46,7 @@ pub struct PolyfillConfig {
     pub name: _rt::String,
     pub shim: _rt::Vec<(_rt::String, _rt::String)>,
     pub debug: bool,
+    pub guest: bool,
     pub instantiation: bool,
 }
 impl ::core::fmt::Debug for PolyfillConfig {
@@ -53,13 +55,14 @@ impl ::core::fmt::Debug for PolyfillConfig {
             .field("name", &self.name)
             .field("shim", &self.shim)
             .field("debug", &self.debug)
+            .field("guest", &self.guest)
             .field("instantiation", &self.instantiation)
             .finish()
     }
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
-pub unsafe fn _export_wat_encode_cabi<T: Guest>(
+pub unsafe fn _export_wast_encode_cabi<T: Guest>(
     arg0: *mut u8,
     arg1: usize,
     arg2: i32,
@@ -67,7 +70,7 @@ pub unsafe fn _export_wat_encode_cabi<T: Guest>(
     #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
     let len0 = arg1;
     let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
-    let result1 = T::wat_encode(
+    let result1 = T::wast_encode(
         _rt::string_lift(bytes0),
         EncodeConfig {
             generate_dwarf: _rt::bool_lift(arg2 as u8),
@@ -99,7 +102,7 @@ pub unsafe fn _export_wat_encode_cabi<T: Guest>(
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
-pub unsafe fn __post_return_wat_encode<T: Guest>(arg0: *mut u8) {
+pub unsafe fn __post_return_wast_encode<T: Guest>(arg0: *mut u8) {
     let l0 = i32::from(*arg0.add(0).cast::<u8>());
     match l0 {
         0 => {
@@ -190,6 +193,7 @@ pub unsafe fn _export_wasi_polyfill_cabi<T: Guest>(
     arg5: usize,
     arg6: i32,
     arg7: i32,
+    arg8: i32,
 ) -> *mut u8 {
     #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
     let len0 = arg1;
@@ -220,7 +224,8 @@ pub unsafe fn _export_wasi_polyfill_cabi<T: Guest>(
             name: _rt::string_lift(bytes1),
             shim: result8,
             debug: _rt::bool_lift(arg6 as u8),
-            instantiation: _rt::bool_lift(arg7 as u8),
+            guest: _rt::bool_lift(arg7 as u8),
+            instantiation: _rt::bool_lift(arg8 as u8),
         },
     );
     let ptr10 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
@@ -309,7 +314,7 @@ pub unsafe fn __post_return_wasi_polyfill<T: Guest>(arg0: *mut u8) {
     }
 }
 pub trait Guest {
-    fn wat_encode(
+    fn wast_encode(
         input: _rt::String,
         config: EncodeConfig,
     ) -> Result<_rt::Vec<u8>, ToolsError>;
@@ -325,12 +330,12 @@ pub trait Guest {
 #[doc(hidden)]
 macro_rules! __export_world_tools_cabi {
     ($ty:ident with_types_in $($path_to_types:tt)*) => {
-        const _ : () = { #[export_name = "wat-encode"] unsafe extern "C" fn
-        export_wat_encode(arg0 : * mut u8, arg1 : usize, arg2 : i32,) -> * mut u8 {
-        $($path_to_types)*:: _export_wat_encode_cabi::<$ty > (arg0, arg1, arg2) }
-        #[export_name = "cabi_post_wat-encode"] unsafe extern "C" fn
-        _post_return_wat_encode(arg0 : * mut u8,) { $($path_to_types)*::
-        __post_return_wat_encode::<$ty > (arg0) } #[export_name = "wasm-decode"] unsafe
+        const _ : () = { #[export_name = "wast-encode"] unsafe extern "C" fn
+        export_wast_encode(arg0 : * mut u8, arg1 : usize, arg2 : i32,) -> * mut u8 {
+        $($path_to_types)*:: _export_wast_encode_cabi::<$ty > (arg0, arg1, arg2) }
+        #[export_name = "cabi_post_wast-encode"] unsafe extern "C" fn
+        _post_return_wast_encode(arg0 : * mut u8,) { $($path_to_types)*::
+        __post_return_wast_encode::<$ty > (arg0) } #[export_name = "wasm-decode"] unsafe
         extern "C" fn export_wasm_decode(arg0 : * mut u8, arg1 : usize, arg2 : i32, arg3
         : * mut u8, arg4 : usize, arg5 : i32,) -> * mut u8 { $($path_to_types)*::
         _export_wasm_decode_cabi::<$ty > (arg0, arg1, arg2, arg3, arg4, arg5) }
@@ -338,11 +343,11 @@ macro_rules! __export_world_tools_cabi {
         _post_return_wasm_decode(arg0 : * mut u8,) { $($path_to_types)*::
         __post_return_wasm_decode::<$ty > (arg0) } #[export_name = "wasi-polyfill"]
         unsafe extern "C" fn export_wasi_polyfill(arg0 : * mut u8, arg1 : usize, arg2 : *
-        mut u8, arg3 : usize, arg4 : * mut u8, arg5 : usize, arg6 : i32, arg7 : i32,) ->
-        * mut u8 { $($path_to_types)*:: _export_wasi_polyfill_cabi::<$ty > (arg0, arg1,
-        arg2, arg3, arg4, arg5, arg6, arg7) } #[export_name = "cabi_post_wasi-polyfill"]
-        unsafe extern "C" fn _post_return_wasi_polyfill(arg0 : * mut u8,) {
-        $($path_to_types)*:: __post_return_wasi_polyfill::<$ty > (arg0) } };
+        mut u8, arg3 : usize, arg4 : * mut u8, arg5 : usize, arg6 : i32, arg7 : i32, arg8
+        : i32,) -> * mut u8 { $($path_to_types)*:: _export_wasi_polyfill_cabi::<$ty >
+        (arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) } #[export_name =
+        "cabi_post_wasi-polyfill"] unsafe extern "C" fn _post_return_wasi_polyfill(arg0 :
+        * mut u8,) { $($path_to_types)*:: __post_return_wasi_polyfill::<$ty > (arg0) } };
     };
 }
 #[doc(hidden)]
@@ -417,18 +422,19 @@ pub(crate) use __export_tools_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.35.0:legion:tools:tools:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 493] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xf1\x02\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 501] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xf9\x02\x01A\x02\x01\
 A\x16\x01r\x01\x07messages\x03\0\x0btools-error\x03\0\0\x01r\x01\x0egenerate-dwa\
 rf\x7f\x03\0\x0dencode-config\x03\0\x02\x01r\x03\x0dskeleton-only\x7f\x0bindent-\
 texts\x11fold-instructions\x7f\x03\0\x0ddecode-config\x03\0\x04\x01o\x02ss\x01p\x06\
-\x01r\x04\x04names\x04shim\x07\x05debug\x7f\x0dinstantiation\x7f\x03\0\x0fpolyfi\
-ll-config\x03\0\x08\x01p}\x01j\x01\x0a\x01\x01\x01@\x02\x05inputs\x06config\x03\0\
-\x0b\x04\0\x0awat-encode\x01\x0c\x01j\x01s\x01\x01\x01@\x02\x05input\x0a\x06conf\
-ig\x05\0\x0d\x04\0\x0bwasm-decode\x01\x0e\x01o\x02s\x0a\x01p\x0f\x01j\x01\x10\x01\
-\x01\x01@\x02\x05input\x0a\x06config\x09\0\x11\x04\0\x0dwasi-polyfill\x01\x12\x04\
-\0\x12legion:tools/tools\x04\0\x0b\x0b\x01\0\x05tools\x03\0\0\0G\x09producers\x01\
-\x0cprocessed-by\x02\x0dwit-component\x070.220.0\x10wit-bindgen-rust\x060.35.0";
+\x01r\x05\x04names\x04shim\x07\x05debug\x7f\x05guest\x7f\x0dinstantiation\x7f\x03\
+\0\x0fpolyfill-config\x03\0\x08\x01p}\x01j\x01\x0a\x01\x01\x01@\x02\x05inputs\x06\
+config\x03\0\x0b\x04\0\x0bwast-encode\x01\x0c\x01j\x01s\x01\x01\x01@\x02\x05inpu\
+t\x0a\x06config\x05\0\x0d\x04\0\x0bwasm-decode\x01\x0e\x01o\x02s\x0a\x01p\x0f\x01\
+j\x01\x10\x01\x01\x01@\x02\x05input\x0a\x06config\x09\0\x11\x04\0\x0dwasi-polyfi\
+ll\x01\x12\x04\0\x12legion:tools/tools\x04\0\x0b\x0b\x01\0\x05tools\x03\0\0\0G\x09\
+producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.220.0\x10wit-bindgen-rus\
+t\x060.35.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

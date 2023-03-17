@@ -9,7 +9,7 @@
         "fmt": "cargo fmt --all",
         "p": "git push && git push --tags --prune",
         "reset": "git reset Head~ --soft",
-        "u": "cargo upgrade --workspace"
+        "u": "cargo upgrade --incompatible"
     },
     "devDependencies": {
         "@bytecodealliance/jco": "^1.8.1",

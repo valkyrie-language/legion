@@ -9,6 +9,7 @@ world tools {
     }
     record decode-config {
         skeleton-only: bool,
+        /// Config the string to use when indenting.
         indent-text: string,
         fold-instructions: bool
     }
@@ -16,9 +17,10 @@ world tools {
         name: string,
         shim: list<tuple<string, string>>,
         debug: bool,
+        guest: bool,
         instantiation: bool,
     }
-    export wat-encode: func(input: string, config: encode-config) -> result<list<u8>, tools-error>;
+    export wast-encode: func(input: string, config: encode-config) -> result<list<u8>, tools-error>;
     export wasm-decode: func(input: list<u8>, config: decode-config) -> result<string, tools-error>;
     export wasi-polyfill: func(input: list<u8>, config: polyfill-config) -> result<list<tuple<string, list<u8>>>, tools-error>;
 }
