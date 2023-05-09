@@ -2,7 +2,7 @@
 resolver = "2"
 members = ["projects/*"]
 default-members = [
-    "projects/legion-wit",
+    "projects/legion-cli",
 ]
 exclude = [
     "projects/.DS_Store",

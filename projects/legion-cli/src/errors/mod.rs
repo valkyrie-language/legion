@@ -1,4 +1,8 @@
-use crate::bindings::ToolsError;
+
+#[derive(Debug)]
+pub struct ToolsError {
+    pub message: String,
+}
 
 impl From<anyhow::Error> for ToolsError {
     fn from(error: anyhow::Error) -> Self {

@@ -1,0 +1,64 @@
+// use crate::bindings::{self, DecodeConfig, EncodeConfig, Guest, PolyfillConfig, ToolsError, export};
+// use js_component_bindgen::{BindingsMode, InstantiationMode, TranspileOpts};
+// use std::collections::HashMap;
+// use clap::{Error, Parser};
+// use wasmprinter::PrintFmtWrite;
+// use wat::GenerateDwarf;
+// use crate::LegionCLI;
+//
+// export!(ToolsContext with_types_in bindings);
+//
+// pub struct ToolsContext {}
+//
+// impl Guest for ToolsContext {
+//     fn run() -> Result<(), String> {
+//         Ok(())
+//     }
+//
+//     fn wast_encode(input: String, config: EncodeConfig) -> Result<Vec<u8>, ToolsError> {
+//         let mut parser = wat::Parser::new();
+//         if config.generate_dwarf {
+//             parser.generate_dwarf(GenerateDwarf::Full);
+//         }
+//         Ok(parser.parse_str(None, input)?)
+//     }
+//
+//     fn wasm_decode(input: Vec<u8>, config: DecodeConfig) -> Result<String, ToolsError> {
+//         let mut parser = wasmprinter::Config::new();
+//         parser.name_unnamed(true);
+//         parser.print_offsets(false);
+//         parser.print_skeleton(config.skeleton_only);
+//         parser.indent_text(config.indent_text);
+//         // parser.name_unnamed(config.indent_text);
+//         parser.fold_instructions(config.fold_instructions);
+//         let mut dst = String::new();
+//         parser.print(&input, &mut PrintFmtWrite(&mut dst))?;
+//         Ok(dst)
+//     }
+//
+//     fn wasi_polyfill(input: Vec<u8>, config: PolyfillConfig) -> Result<Vec<(String, Vec<u8>)>, ToolsError> {
+//         let mut map = HashMap::default();
+//         map.insert("wasi:*".to_string(), "@bytecodealliance/preview2-shim/*".to_string());
+//         map.insert("valkyrie:std-legacy/*".to_string(), "@valkyrie-language/std-legacy/*".to_string());
+//         for (k, v) in config.shim {
+//             map.insert(k, v);
+//         }
+//         let cfg = TranspileOpts {
+//             name: config.name,
+//             no_typescript: false,
+//             instantiation: if config.instantiation { Some(InstantiationMode::Async) } else { None },
+//             import_bindings: Some(BindingsMode::Js),
+//             map: Some(map),
+//             no_nodejs_compat: false,
+//             base64_cutoff: 0,
+//             tla_compat: false,
+//             valid_lifting_optimization: !config.debug,
+//             tracing: config.debug,
+//             no_namespaced_exports: true,
+//             multi_memory: true,
+//             guest: config.guest,
+//         };
+//         let result = js_component_bindgen::transpile(&input, cfg)?;
+//         Ok(result.files)
+//     }
+// }
