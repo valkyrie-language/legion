@@ -1,5 +1,7 @@
 mod errors;
 mod tools;
+pub mod commands;
+
 // use inquire::{Text, validator::{StringValidator, Validation}, CustomUserError};
 pub use crate::errors::ToolsError;
 use std::path::PathBuf;
@@ -13,60 +15,6 @@ pub struct LegionCLI {
     commands: Option<LegionCommands>,
     #[command(flatten)]
     arguments: LegionArguments,
-}
-
-#[derive(Debug, Args)]
-pub struct LegionArguments {
-    /// Optional name to operate on
-    name: Option<String>,
-
-    /// Sets a custom config file
-    #[arg(short, long, value_name = "FILE")]
-    config: Option<PathBuf>,
-
-    /// Turn debugging information on
-    #[arg(short, long, action = clap::ArgAction::Count)]
-    debug: u8,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum LegionCommands {
-    /// does testing things
-    Test {
-        /// lists test values
-        #[arg(short, long)]
-        list: bool,
-    },
-    Encode(RunEncode),
-}
-
-#[derive(Debug, Parser)]
-pub struct RunEncode {
-    #[arg(short, long, value_name = "FILE")]
-    generate_dwarf: bool,
-}
-
-impl RunEncode {
-    pub async fn run(self, args: &LegionArguments) -> Result<(), ToolsError> {
-        let input = "";
-        let mut parser = wat::Parser::new();
-        if self.generate_dwarf {
-            parser.generate_dwarf(GenerateDwarf::Full);
-        }
-        let bytes = parser.parse_str(None, input)?;
-        Ok(())
-    }
-}
-impl LegionCommands {
-    pub async fn run(self, arguments: &LegionArguments) -> Result<(), ToolsError> {
-        match self {
-            LegionCommands::Test { list } => {
-                println!("Testing!");
-                Ok(())
-            }
-            LegionCommands::Encode(cmd) => cmd.run(arguments).await,
-        }
-    }
 }
 
 impl LegionCLI {
@@ -85,6 +33,7 @@ impl LegionCLI {
 
 use dialoguer::{Select, theme::ColorfulTheme};
 use wat::GenerateDwarf;
+use crate::commands::{LegionArguments, LegionCommands};
 
 fn main() {
     let selections = &["Ice Cream", "Vanilla Cupcake", "Chocolate Muffin", "A Pile of sweet, sweet mustard"];

@@ -18,16 +18,7 @@
 
 //
 //     fn wasm_decode(input: Vec<u8>, config: DecodeConfig) -> Result<String, ToolsError> {
-//         let mut parser = wasmprinter::Config::new();
-//         parser.name_unnamed(true);
-//         parser.print_offsets(false);
-//         parser.print_skeleton(config.skeleton_only);
-//         parser.indent_text(config.indent_text);
-//         // parser.name_unnamed(config.indent_text);
-//         parser.fold_instructions(config.fold_instructions);
-//         let mut dst = String::new();
-//         parser.print(&input, &mut PrintFmtWrite(&mut dst))?;
-//         Ok(dst)
+
 //     }
 //
 //     fn wasi_polyfill(input: Vec<u8>, config: PolyfillConfig) -> Result<Vec<(String, Vec<u8>)>, ToolsError> {
