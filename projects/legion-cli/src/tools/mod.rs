@@ -15,13 +15,7 @@
 //         Ok(())
 //     }
 //
-//     fn wast_encode(input: String, config: EncodeConfig) -> Result<Vec<u8>, ToolsError> {
-//         let mut parser = wat::Parser::new();
-//         if config.generate_dwarf {
-//             parser.generate_dwarf(GenerateDwarf::Full);
-//         }
-//         Ok(parser.parse_str(None, input)?)
-//     }
+
 //
 //     fn wasm_decode(input: Vec<u8>, config: DecodeConfig) -> Result<String, ToolsError> {
 //         let mut parser = wasmprinter::Config::new();

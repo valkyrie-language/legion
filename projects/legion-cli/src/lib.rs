@@ -1,14 +1,22 @@
 mod errors;
 mod tools;
-use inquire::{Text, validator::{StringValidator, Validation}, CustomUserError};
-pub use crate::{errors::ToolsError};
+// use inquire::{Text, validator::{StringValidator, Validation}, CustomUserError};
+pub use crate::errors::ToolsError;
 use std::path::PathBuf;
 
-use clap::{Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[command(version, about, long_about = None)]
 pub struct LegionCLI {
+    #[command(subcommand)]
+    commands: Option<LegionCommands>,
+    #[command(flatten)]
+    arguments: LegionArguments,
+}
+
+#[derive(Debug, Args)]
+pub struct LegionArguments {
     /// Optional name to operate on
     name: Option<String>,
 
@@ -19,42 +27,98 @@ pub struct LegionCLI {
     /// Turn debugging information on
     #[arg(short, long, action = clap::ArgAction::Count)]
     debug: u8,
-
-    #[command(subcommand)]
-    command: Option<Commands>,
 }
 
 #[derive(Debug, Subcommand)]
-enum Commands {
+pub enum LegionCommands {
     /// does testing things
     Test {
         /// lists test values
         #[arg(short, long)]
         list: bool,
     },
+    Encode(RunEncode),
+}
+
+#[derive(Debug, Parser)]
+pub struct RunEncode {
+    #[arg(short, long, value_name = "FILE")]
+    generate_dwarf: bool,
+}
+
+impl RunEncode {
+    pub async fn run(self, args: &LegionArguments) -> Result<(), ToolsError> {
+        let input = "";
+        let mut parser = wat::Parser::new();
+        if self.generate_dwarf {
+            parser.generate_dwarf(GenerateDwarf::Full);
+        }
+        let bytes = parser.parse_str(None, input)?;
+        Ok(())
+    }
+}
+impl LegionCommands {
+    pub async fn run(self, arguments: &LegionArguments) -> Result<(), ToolsError> {
+        match self {
+            LegionCommands::Test { list } => {
+                println!("Testing!");
+                Ok(())
+            }
+            LegionCommands::Encode(cmd) => cmd.run(arguments).await,
+        }
+    }
 }
 
 impl LegionCLI {
-    pub async fn run(&self) -> Result<(), ToolsError> {
-        println!("{:?}", self);
-        fn validator(input: &str) -> Result<Validation, CustomUserError> {
-            if input.chars().count() > 140 {
-                Ok(Validation::Invalid("You're only allowed 140 characters.".into()))
-            } else {
-                Ok(Validation::Valid)
+    pub async fn run(self) -> Result<(), ToolsError> {
+        println!("{:?}", self.arguments);
+        let Self { commands, arguments } = self;
+        match commands {
+            Some(s) => s.run(&arguments).await?,
+            None => {
+                main();
             }
-        }
-
-        let status = Text::new("What are you thinking about?")
-            .with_validator(validator)
-            .prompt();
-
-        match status {
-            Ok(status) => println!("Your status is being published..."),
-            Err(err) => println!("Error while publishing your status: {}", err),
         }
         Ok(())
     }
 }
 
+use dialoguer::{Select, theme::ColorfulTheme};
+use wat::GenerateDwarf;
 
+fn main() {
+    let selections = &["Ice Cream", "Vanilla Cupcake", "Chocolate Muffin", "A Pile of sweet, sweet mustard"];
+
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .with_prompt("Pick your flavor")
+        .default(0)
+        .items(&selections[..])
+        .interact()
+        .unwrap();
+
+    println!("Enjoy your {}!", selections[selection]);
+
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .with_prompt("Optionally pick your flavor")
+        .default(0)
+        .items(&selections[..])
+        .interact_opt()
+        .unwrap();
+
+    if let Some(selection) = selection {
+        println!("Enjoy your {}!", selections[selection]);
+    }
+    else {
+        println!("You didn't select anything!");
+    }
+
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .with_prompt("Pick your flavor, hint it might be on the second page")
+        .default(0)
+        .max_length(2)
+        .items(&selections[..])
+        .interact()
+        .unwrap();
+
+    println!("Enjoy your {}!", selections[selection]);
+}
