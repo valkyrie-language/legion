@@ -1,7 +1,7 @@
 use clap::Parser;
-use legion::{LegionCLI, ToolsError};
+use legion::{LegionCLI, LegionError};
 
 #[tokio::main(flavor = "current_thread")]
-async fn main() -> Result<(), ToolsError> {
+async fn main() -> Result<(), LegionError> {
     LegionCLI::parse().run().await
 }

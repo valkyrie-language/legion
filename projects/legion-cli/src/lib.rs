@@ -1,9 +1,8 @@
-mod errors;
-mod tools;
 pub mod commands;
+mod errors;
 
 // use inquire::{Text, validator::{StringValidator, Validation}, CustomUserError};
-pub use crate::errors::ToolsError;
+pub use crate::errors::LegionError;
 use std::path::PathBuf;
 
 use clap::{Args, Parser, Subcommand};
@@ -18,7 +17,7 @@ pub struct LegionCLI {
 }
 
 impl LegionCLI {
-    pub async fn run(self) -> Result<(), ToolsError> {
+    pub async fn run(self) -> Result<(), LegionError> {
         println!("{:?}", self.arguments);
         let Self { commands, arguments } = self;
         match commands {
@@ -31,9 +30,8 @@ impl LegionCLI {
     }
 }
 
-use dialoguer::{Select, theme::ColorfulTheme};
-use wat::GenerateDwarf;
 use crate::commands::{LegionArguments, LegionCommands};
+use dialoguer::{Select, theme::ColorfulTheme};
 
 fn main() {
     let selections = &["Ice Cream", "Vanilla Cupcake", "Chocolate Muffin", "A Pile of sweet, sweet mustard"];

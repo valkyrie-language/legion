@@ -1,4 +1,4 @@
-use crate::{ToolsError, commands::LegionArguments};
+use crate::{LegionError, commands::LegionArguments};
 use clap::Parser;
 use wasmprinter::PrintFmtWrite;
 use wat::GenerateDwarf;
@@ -14,7 +14,7 @@ pub struct RunDecode {
 }
 
 impl RunDecode {
-    pub async fn run(self, args: &LegionArguments) -> Result<(), ToolsError> {
+    pub async fn run(self, args: &LegionArguments) -> Result<(), LegionError> {
         let input = [];
         let mut parser = wasmprinter::Config::new();
         parser.name_unnamed(true);
