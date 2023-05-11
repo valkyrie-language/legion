@@ -1,10 +1,6 @@
 pub mod commands;
 mod errors;
-
-// use inquire::{Text, validator::{StringValidator, Validation}, CustomUserError};
 pub use crate::errors::LegionError;
-use std::path::PathBuf;
-
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -18,7 +14,7 @@ pub struct LegionCLI {
 
 impl LegionCLI {
     pub async fn run(self) -> Result<(), LegionError> {
-        println!("{:?}", self.arguments);
+        println!("{:?}", self);
         let Self { commands, arguments } = self;
         match commands {
             Some(s) => s.run(&arguments).await?,

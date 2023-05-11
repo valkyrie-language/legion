@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="build wasi target" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-    <option name="command" value="component build --release --target wasm32-wasip2" />
+    <option name="buildProfileId" value="release" />
+    <option name="command" value="build --target wasm32-wasip2" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <envs />
     <option name="emulateTerminal" value="true" />
