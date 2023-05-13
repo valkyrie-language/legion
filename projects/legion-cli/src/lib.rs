@@ -1,5 +1,6 @@
 pub mod commands;
 mod errors;
+use crate::commands::{LegionArguments, LegionCommands};
 pub use crate::errors::LegionError;
 use clap::{Args, Parser, Subcommand};
 
@@ -18,50 +19,8 @@ impl LegionCLI {
         let Self { commands, arguments } = self;
         match commands {
             Some(s) => s.run(&arguments).await?,
-            None => {
-                main();
-            }
+            None => {}
         }
         Ok(())
     }
-}
-
-use crate::commands::{LegionArguments, LegionCommands};
-use dialoguer::{Select, theme::ColorfulTheme};
-
-fn main() {
-    let selections = &["Ice Cream", "Vanilla Cupcake", "Chocolate Muffin", "A Pile of sweet, sweet mustard"];
-
-    let selection = Select::with_theme(&ColorfulTheme::default())
-        .with_prompt("Pick your flavor")
-        .default(0)
-        .items(&selections[..])
-        .interact()
-        .unwrap();
-
-    println!("Enjoy your {}!", selections[selection]);
-
-    let selection = Select::with_theme(&ColorfulTheme::default())
-        .with_prompt("Optionally pick your flavor")
-        .default(0)
-        .items(&selections[..])
-        .interact_opt()
-        .unwrap();
-
-    if let Some(selection) = selection {
-        println!("Enjoy your {}!", selections[selection]);
-    }
-    else {
-        println!("You didn't select anything!");
-    }
-
-    let selection = Select::with_theme(&ColorfulTheme::default())
-        .with_prompt("Pick your flavor, hint it might be on the second page")
-        .default(0)
-        .max_length(2)
-        .items(&selections[..])
-        .interact()
-        .unwrap();
-
-    println!("Enjoy your {}!", selections[selection]);
 }

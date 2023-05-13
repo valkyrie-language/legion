@@ -4,7 +4,7 @@ use js_component_bindgen::{BindingsMode, InstantiationMode, TranspileOpts};
 use std::collections::HashMap;
 
 #[derive(Debug, Parser)]
-pub struct RunEncode {
+pub struct CommandPolyfill {
     #[arg(short, long, value_name = "FILE")]
     name: String,
     instantiation: bool,
@@ -12,7 +12,7 @@ pub struct RunEncode {
     guest: bool,
 }
 
-impl RunEncode {
+impl CommandPolyfill {
     pub async fn run(self, args: &LegionArguments) -> Result<(), LegionError> {
         let input = [];
         let mut map = HashMap::default();

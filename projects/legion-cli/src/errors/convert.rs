@@ -23,6 +23,14 @@ impl From<wat::Error> for LegionError {
     }
 }
 
+impl From<dialoguer::Error> for LegionError {
+    fn from(error: dialoguer::Error) -> Self {
+        let kind = LegionErrorKind::Custom { message: error.to_string() };
+        Self { kind: Box::new(kind) }
+    }
+}
+
+
 
 #[cfg(feature = "wasm-opt")]
 impl From<OptimizationError> for LegionError {

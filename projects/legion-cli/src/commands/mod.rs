@@ -1,25 +1,30 @@
-use crate::{LegionError, commands::run_build::RunBuild};
+pub use self::{cmd_build::CommandBuild, cmd_encode::CommandEncode, cmd_run::CommandRun};
+use crate::{
+    LegionError,
+    commands::{cmd_decode::CommandDecode, cmd_polyfill::CommandPolyfill},
+};
 use clap::{Args, Parser, Subcommand};
 use std::path::PathBuf;
 
-mod run_build;
-mod run_decode;
-mod run_encode;
-mod run_polyfill;
-
-pub use self::run_encode::RunEncode;
+mod cmd_build;
+mod cmd_decode;
+mod cmd_encode;
+mod cmd_polyfill;
+mod cmd_run;
 
 #[derive(Debug, Subcommand)]
 pub enum LegionCommands {
     /// Build the legion project
-    Build(RunBuild),
+    Run(CommandRun),
+    /// Build the legion project
+    Build(CommandBuild),
     /// encode `wat`, `wast` to wasm
-    Encode(RunEncode),
+    Encode(CommandEncode),
     /// decode `wasm` to `wat`
-    Decode(RunEncode),
+    Decode(CommandDecode),
     /// decode `wasm` to `js`
     #[command(alias = "shim")]
-    Polyfill(RunEncode),
+    Polyfill(CommandPolyfill),
 }
 
 #[derive(Debug, Args)]
@@ -36,10 +41,12 @@ pub struct LegionArguments {
 impl LegionCommands {
     pub async fn run(self, arguments: &LegionArguments) -> Result<(), LegionError> {
         match self {
+            Self::Run(cmd) => cmd.run(arguments).await,
             Self::Build(cmd) => cmd.run(arguments).await,
             Self::Encode(cmd) => cmd.run(arguments).await,
             Self::Decode(cmd) => cmd.run(arguments).await,
             Self::Polyfill(cmd) => cmd.run(arguments).await,
+
         }
     }
 }

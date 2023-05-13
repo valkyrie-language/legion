@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use wasm_opt::{OptimizationOptions, OptimizeLevel, PassOptions, ShrinkLevel};
 
 #[derive(Debug, Parser)]
-pub struct RunBuild {
+pub struct CommandBuild {
     /// Package to build (see `cargo help pkgid`)
     #[arg(short, long, alias = "include", value_name = "packages...")]
     package: Vec<String>,
@@ -40,7 +40,7 @@ pub struct RunBuild {
     optimize_z: bool,
 }
 
-impl RunBuild {
+impl CommandBuild {
     #[cfg(feature = "wasm-opt")]
     pub async fn run(self, args: &LegionArguments) -> Result<(), LegionError> {
         let mut options = OptimizationOptions {

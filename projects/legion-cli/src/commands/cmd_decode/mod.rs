@@ -4,7 +4,7 @@ use wasmprinter::PrintFmtWrite;
 use wat::GenerateDwarf;
 
 #[derive(Debug, Parser)]
-pub struct RunDecode {
+pub struct CommandDecode {
     #[arg(short, long, value_name = "FILE")]
     skeleton_only: bool,
     #[arg(short, long, value_name = "FILE")]
@@ -13,7 +13,7 @@ pub struct RunDecode {
     fold_instructions: bool,
 }
 
-impl RunDecode {
+impl CommandDecode {
     pub async fn run(self, args: &LegionArguments) -> Result<(), LegionError> {
         let input = [];
         let mut parser = wasmprinter::Config::new();

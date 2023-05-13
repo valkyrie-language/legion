@@ -5,7 +5,7 @@ use wat::GenerateDwarf;
 
 /// encode `wat`, `wast` to wasm
 #[derive(Debug, Parser)]
-pub struct RunEncode {
+pub struct CommandEncode {
     /// Input `wat` file path
     #[arg(short, long, value_name = "FILE")]
     input: String,
@@ -22,7 +22,7 @@ pub struct RunEncode {
     dry_run: bool,
 }
 
-impl RunEncode {
+impl CommandEncode {
     pub async fn run(&self, args: &LegionArguments) -> Result<(), LegionError> {
         let input = std::fs::read_to_string(&self.input)?;
         let mut parser = wat::Parser::new();
