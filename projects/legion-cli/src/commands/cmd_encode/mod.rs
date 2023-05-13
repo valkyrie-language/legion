@@ -12,11 +12,11 @@ pub struct CommandEncode {
     /// Output `wasm` file path
     #[arg(short, long, value_name = "FILE")]
     output: Option<String>,
-    /// Override output file path
-    #[arg(long, default_value = "true")]
-    output_override: bool,
+    /// Skip output if file already exists
+    #[arg(long)]
+    skip_override: bool,
     /// Generate DWARF debugging information
-    #[arg(short = 'd', long, value_name = "FILE")]
+    #[arg(short = 'd', long)]
     generate_dwarf: bool,
     #[arg(long)]
     dry_run: bool,
@@ -30,8 +30,19 @@ impl CommandEncode {
             parser.generate_dwarf(GenerateDwarf::Full);
         }
         let bytes = parser.parse_str(None, input)?;
-        if !self.dry_run {
-            let output = self.guess_output();
+        let output = self.guess_output();
+        if self.skip_override {
+            if output.exists() {
+                println!("{}", "Skipping override");
+                return Ok(());
+            }
+            else if self.dry_run {
+                println!("{}", "Finish dry run");
+                return Ok(());
+            }
+            else {
+                std::fs::write(&output, bytes)?;
+            }
         }
         Ok(())
     }

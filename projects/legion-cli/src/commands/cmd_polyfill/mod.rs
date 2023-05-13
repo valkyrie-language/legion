@@ -5,16 +5,20 @@ use std::collections::HashMap;
 
 #[derive(Debug, Parser)]
 pub struct CommandPolyfill {
+    input: String,
     #[arg(short, long, value_name = "FILE")]
     name: String,
+    #[arg(short, long, value_name = "FILE")]
     instantiation: bool,
+    #[arg(short, long, value_name = "FILE")]
     debug: bool,
+    #[arg(short, long, value_name = "FILE")]
     guest: bool,
 }
 
 impl CommandPolyfill {
-    pub async fn run(self, args: &LegionArguments) -> Result<(), LegionError> {
-        let input = [];
+    pub async fn run(&self, _: &LegionArguments) -> Result<(), LegionError> {
+        let input = std::fs::read(&self.input)?;
         let mut map = HashMap::default();
         map.insert("wasi:*".to_string(), "@bytecodealliance/preview2-shim/*".to_string());
         map.insert("valkyrie:std-legacy/*".to_string(), "@valkyrie-language/std-legacy/*".to_string());
@@ -22,7 +26,7 @@ impl CommandPolyfill {
         //     map.insert(k, v);
         // }
         let cfg = TranspileOpts {
-            name: self.name,
+            name: self.name.to_string(),
             no_typescript: false,
             instantiation: if self.instantiation { Some(InstantiationMode::Async) } else { None },
             import_bindings: Some(BindingsMode::Js),

@@ -18,24 +18,19 @@ impl CommandRun {
     }
 
     pub fn select_executable(&self) -> Result<String, LegionError> {
-        match self.binary.as_ref() {
-            Some(s) => Ok(s.to_owned()),
-            None => {
-                let selections = ["bin1", "bin2", "bin3", "bin4"];
-
-                match selections {
-                    [one] => Ok(one.to_owned()),
-                    many => {
-                        println!("There are multiple executable files in the directory.");
-                        let selection = Select::with_theme(&ColorfulTheme::default())
-                            .with_prompt("Select the executable:")
-                            .default(0)
-                            .items(&selections)
-                            .interact()?;
-                        Ok(selections[selection].to_owned())
-                    }
-                }
-            }
+        if let Some(s) = self.binary.as_ref() {
+            return Ok(s.to_owned());
         }
+        let available = vec!["@package1/bin1", "@package1/bin2", "@package2/bin3", "@package2/bin4"];
+        if let [one] = available.as_slice() {
+            return Ok(one.to_string());
+        }
+        println!("There are multiple executable files in the directory.");
+        let selection = Select::with_theme(&ColorfulTheme::default())
+            .with_prompt("Select the executable:")
+            .default(0)
+            .items(&available)
+            .interact()?;
+        Ok(available[selection].to_owned())
     }
 }
