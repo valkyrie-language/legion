@@ -6,6 +6,7 @@ default-members = [
 ]
 exclude = [
     "projects/.DS_Store",
+    "projects/v-wasm32-wasi",
     "projects/legion-wasm32-wasi"
 ]
 
