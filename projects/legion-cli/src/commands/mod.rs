@@ -46,7 +46,6 @@ impl LegionCommands {
             Self::Encode(cmd) => cmd.run(arguments).await,
             Self::Decode(cmd) => cmd.run(arguments).await,
             Self::Polyfill(cmd) => cmd.run(arguments).await,
-
         }
     }
 }

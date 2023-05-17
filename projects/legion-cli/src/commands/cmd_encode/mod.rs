@@ -7,7 +7,6 @@ use wat::GenerateDwarf;
 #[derive(Debug, Parser)]
 pub struct CommandEncode {
     /// Input `wat` file path
-    #[arg(short, long, value_name = "FILE")]
     input: String,
     /// Output `wasm` file path
     #[arg(short, long, value_name = "FILE")]
@@ -18,8 +17,6 @@ pub struct CommandEncode {
     /// Generate DWARF debugging information
     #[arg(short = 'd', long)]
     generate_dwarf: bool,
-    #[arg(long)]
-    dry_run: bool,
 }
 
 impl CommandEncode {
@@ -34,10 +31,6 @@ impl CommandEncode {
         if self.skip_override {
             if output.exists() {
                 println!("{}", "Skipping override");
-                return Ok(());
-            }
-            else if self.dry_run {
-                println!("{}", "Finish dry run");
                 return Ok(());
             }
             else {

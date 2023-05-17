@@ -6,13 +6,13 @@ use std::collections::HashMap;
 #[derive(Debug, Parser)]
 pub struct CommandPolyfill {
     input: String,
-    #[arg(short, long, value_name = "FILE")]
+    #[arg(short, long, default_value = "index")]
     name: String,
-    #[arg(short, long, value_name = "FILE")]
+    #[arg(short, long)]
     instantiation: bool,
-    #[arg(short, long, value_name = "FILE")]
+    #[arg(short, long)]
     debug: bool,
-    #[arg(short, long, value_name = "FILE")]
+    #[arg(short, long)]
     guest: bool,
 }
 

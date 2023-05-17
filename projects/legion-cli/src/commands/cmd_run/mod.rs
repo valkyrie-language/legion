@@ -1,6 +1,7 @@
 use crate::{LegionError, commands::LegionArguments};
 use clap::Parser;
 use dialoguer::{Select, theme::ColorfulTheme};
+use std::path::Path;
 
 #[derive(Debug, Parser)]
 pub struct CommandRun {
@@ -10,10 +11,16 @@ pub struct CommandRun {
 
 impl CommandRun {
     pub async fn run(&self, args: &LegionArguments) -> Result<(), LegionError> {
+        // single file mode
+        match self.binary.as_ref() {
+            Some(s) if Path::new(s).exists() => {
+                return self.run_single_binary(s, args);
+            }
+            _ => {}
+        }
+        // package mode
         let exe = self.select_executable()?;
-
         println!("Running {}!", exe);
-
         Ok(())
     }
 
@@ -32,5 +39,10 @@ impl CommandRun {
             .items(&available)
             .interact()?;
         Ok(available[selection].to_owned())
+    }
+
+    fn run_single_binary(&self, path: &str, _: &LegionArguments) -> Result<(), LegionError> {
+        println!("Running {}!", path);
+        Ok(())
     }
 }
