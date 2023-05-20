@@ -3,7 +3,7 @@ use crate::{
     LegionError,
     commands::{cmd_decode::CommandDecode, cmd_polyfill::CommandPolyfill},
 };
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Subcommand};
 use std::path::PathBuf;
 
 mod cmd_build;
@@ -23,7 +23,7 @@ pub enum LegionCommands {
     /// decode `wasm` to `wat`
     Decode(CommandDecode),
     /// decode `wasm` to `js`
-    #[command(alias = "shim")]
+    #[command(visible_alias = "shim")]
     Polyfill(CommandPolyfill),
 }
 

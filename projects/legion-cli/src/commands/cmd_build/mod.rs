@@ -1,23 +1,21 @@
 use crate::{LegionError, commands::LegionArguments};
 use clap::Parser;
-use js_component_bindgen::{BindingsMode, InstantiationMode, TranspileOpts};
-use std::collections::HashMap;
 #[cfg(feature = "wasm-opt")]
 use wasm_opt::{OptimizationOptions, OptimizeLevel, PassOptions, ShrinkLevel};
 
 #[derive(Debug, Parser)]
 pub struct CommandBuild {
     /// Package to build (see `cargo help pkgid`)
-    #[arg(short, long, alias = "include", value_name = "packages...")]
+    #[arg(short, long, visible_alias = "include", value_name = "packages...")]
     package: Vec<String>,
     /// Exclude packages from the build
     #[arg(long, value_name = "packages...")]
     exclude: Vec<String>,
     /// Build only this package's library
-    #[arg(short, long, alias = "lib")]
+    #[arg(short, long, visible_alias = "lib")]
     library: bool,
     /// Build only the specified binary
-    #[arg(short, long, alias = "bin", value_name = "binaries...")]
+    #[arg(short, long, visible_alias = "bin", value_name = "binaries...")]
     binary: Vec<String>,
     #[arg(long = "O0")]
     optimize_0: bool,
@@ -57,7 +55,7 @@ impl CommandBuild {
         Ok(())
     }
     #[cfg(not(feature = "wasm-opt"))]
-    pub async fn run(self, args: &LegionArguments) -> Result<(), LegionError> {
+    pub async fn run(self, _: &LegionArguments) -> Result<(), LegionError> {
         println!("Unable to build because: https://github.com/dtolnay/cxx/issues/1429");
         Ok(())
     }
