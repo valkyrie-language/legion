@@ -1,7 +1,7 @@
 use crate::{LegionError, commands::LegionArguments};
 use clap::Parser;
 #[cfg(feature = "wasm-opt")]
-use wasm_opt::{OptimizationOptions, OptimizeLevel, PassOptions, ShrinkLevel};
+use wasm_opt::{OptimizationOptions, OptimizeLevel, ShrinkLevel};
 
 #[derive(Debug, Parser)]
 pub struct CommandBuild {
@@ -40,7 +40,7 @@ pub struct CommandBuild {
 
 impl CommandBuild {
     #[cfg(feature = "wasm-opt")]
-    pub async fn run(self, args: &LegionArguments) -> Result<(), LegionError> {
+    pub async fn run(self, _: &LegionArguments) -> Result<(), LegionError> {
         let mut options = OptimizationOptions {
             reader: Default::default(),
             writer: Default::default(),
