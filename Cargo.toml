@@ -2,13 +2,13 @@
 resolver = "2"
 members = ["projects/*"]
 default-members = [
-#    "projects/v-cli",
+    #    "projects/v-cli",
     "projects/legion-cli",
 ]
 exclude = [
     "projects/.DS_Store",
     "projects/v-wasm32-wasi",
-    "projects/legion-wasm32-wasi"
+    "projects/legion-wasm32-wasi",
 ]
 
 [profile.release]
