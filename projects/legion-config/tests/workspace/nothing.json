@@ -1,5 +1,8 @@
 {
     "type": "package",
-    "authors": null,
-    "version": "0.0.0"
+    "authors": [],
+    "version": "0.0.0",
+    "members": ["projects/"],
+    "include": [],
+    "exclude": []
 }
