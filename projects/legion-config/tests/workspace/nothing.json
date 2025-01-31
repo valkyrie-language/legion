@@ -4,5 +4,8 @@
     "version": "0.0.0",
     "members": ["projects/"],
     "include": [],
-    "exclude": []
+    "exclude": [],
+    "peers": {
+        "build-dependencies": []
+    }
 }

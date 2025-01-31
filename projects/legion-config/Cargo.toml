@@ -11,16 +11,19 @@ edition = "2021"
 
 [dependencies]
 merge = "0.1.0"
-schemars = { version = "1.0.0-alpha.17" }
 
 serde = "1.0.217"
 serde_derive = "1.0.217"
 #config = "0.13.3"
-semver = { version = "1.0.25", features = ["serde"] }
 json5 = "0.4.1"
 toml = "0.8.19"
 globset = "0.4.15"
 serde_json = "1.0.138"
+semver = { version = "1.0.25", features = ["serde"] }
+
+[dependencies.schemars]
+version = "1.0.0-alpha.17"
+features = ["semver1"]
 
 [dependencies.serde-types]
 #path = "../serde-types"

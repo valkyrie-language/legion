@@ -1,5 +1,4 @@
 use legion_config::LegionConfig;
-use schemars::schema_for;
 use serde_json::{Serializer, ser::PrettyFormatter};
 use std::path::Path;
 use schemars::generate::SchemaSettings;

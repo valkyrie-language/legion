@@ -1,3 +1,4 @@
+use crate::{LegionPackage, LegionWorkspace};
 use schemars::{JsonSchema, Schema, SchemaGenerator};
 use serde_derive::{Deserialize, Serialize};
 use serde_json::{Map, Value};
@@ -31,5 +32,27 @@ impl JsonSchema for LegionAuthors {
             }),
         );
         Schema::from(map)
+    }
+}
+
+impl LegionAuthors {
+    pub fn send_author(&self, authors: &mut Vec<String>) {
+        match self {
+            LegionAuthors::Inherit => {}
+            LegionAuthors::One(s) => authors.push(s.clone()),
+            LegionAuthors::Many(s) => authors.extend(s.clone()),
+        }
+    }
+}
+
+impl LegionPackage {
+    pub fn get_authors(&self, ws: Option<&LegionWorkspace>) -> Vec<String> {
+        // in most cases, there is only one author
+        let mut authors = Vec::with_capacity(1);
+        if let Some(s) = ws {
+            s.authors.send_author(&mut authors)
+        }
+        self.authors.send_author(&mut authors);
+        authors
     }
 }

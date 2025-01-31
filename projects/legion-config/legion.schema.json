@@ -3,6 +3,32 @@
     "title": "LegionConfig",
     "components": {
         "schemas": {
+            "DependencySystem": {
+                "type": "object",
+                "properties": {
+                    "build-dependencies": {
+                        "type": "array",
+                        "default": [],
+                        "items": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        }
+                    },
+                    "dependencies": {
+                        "type": "array",
+                        "default": [],
+                        "items": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        }
+                    },
+                    "tests-dependencies": {
+                        "type": "array",
+                        "default": [],
+                        "items": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        }
+                    }
+                }
+            },
             "LegionAuthors": {
                 "anyOf": [
                     {
@@ -14,6 +40,38 @@
                             "type": "string"
                         }
                     }
+                ]
+            },
+            "LegionDependency": {
+                "type": "object",
+                "properties": {
+                    "branch": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "nullable": true
+                    },
+                    "git": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "nullable": true
+                    },
+                    "hash": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "nullable": true
+                    },
+                    "version": {
+                        "$ref": "#/components/schemas/SemVer"
+                    }
+                },
+                "required": [
+                    "version"
                 ]
             },
             "LegionPackage": {
@@ -36,21 +94,14 @@
                         "type": "array",
                         "default": [],
                         "items": {
-                            "type": "string"
+                            "$ref": "#/components/schemas/LegionDependency"
                         }
                     },
                     "dependencies": {
                         "type": "array",
                         "default": [],
                         "items": {
-                            "type": "string"
-                        }
-                    },
-                    "dev-dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
-                            "type": "string"
+                            "$ref": "#/components/schemas/LegionDependency"
                         }
                     },
                     "documentation": {
@@ -80,11 +131,12 @@
                         "description": "The name of the package",
                         "type": "string"
                     },
-                    "peer-dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
-                            "type": "string"
+                    "peers": {
+                        "$ref": "#/components/schemas/DependencySystem",
+                        "default": {
+                            "build-dependencies": [],
+                            "dependencies": [],
+                            "tests-dependencies": []
                         }
                     },
                     "private": {
@@ -110,23 +162,29 @@
                             "type": "string"
                         }
                     },
+                    "tests-dependencies": {
+                        "type": "array",
+                        "default": [],
+                        "items": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        }
+                    },
                     "version": {
                         "description": "The version of the package",
-                        "$ref": "#/components/schemas/LegionVersion",
-                        "default": null
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/SemVer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "default": null,
+                        "nullable": true
                     }
                 },
                 "required": [
                     "name"
-                ]
-            },
-            "LegionVersion": {
-                "oneOf": [
-                    {
-                        "type": "string",
-                        "default": "0.0.0",
-                        "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$"
-                    }
                 ]
             },
             "LegionWorkspace": {
@@ -135,6 +193,20 @@
                     "authors": {
                         "$ref": "#/components/schemas/LegionAuthors",
                         "default": null
+                    },
+                    "build-dependencies": {
+                        "type": "array",
+                        "default": [],
+                        "items": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        }
+                    },
+                    "dependencies": {
+                        "type": "array",
+                        "default": [],
+                        "items": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        }
                     },
                     "exclude": {
                         "description": "Exclude module in `exclude` paths",
@@ -160,6 +232,14 @@
                             "type": "string"
                         }
                     },
+                    "peers": {
+                        "$ref": "#/components/schemas/DependencySystem",
+                        "default": {
+                            "build-dependencies": [],
+                            "dependencies": [],
+                            "tests-dependencies": []
+                        }
+                    },
                     "private": {
                         "type": [
                             "boolean",
@@ -168,11 +248,30 @@
                         "default": null,
                         "nullable": true
                     },
+                    "tests-dependencies": {
+                        "type": "array",
+                        "default": [],
+                        "items": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        }
+                    },
                     "version": {
-                        "$ref": "#/components/schemas/LegionVersion",
-                        "default": null
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/SemVer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "default": null,
+                        "nullable": true
                     }
                 }
+            },
+            "SemVer": {
+                "type": "string",
+                "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
             }
         }
     },
