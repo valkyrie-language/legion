@@ -1,9 +1,12 @@
 pub use crate::authors::LegionAuthors;
+use crate::dependencies::DependencySystem;
 use schemars::JsonSchema;
-use semver::{Version, VersionReq};
+use semver::Version;
 use serde::{Deserialize, Serialize};
+use std::collections::{BTreeMap, HashMap};
 
 pub mod authors;
+pub mod dependencies;
 
 #[derive(Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "kebab-case", tag = "type")]
@@ -23,7 +26,7 @@ pub struct LegionWorkspace {
     private: Option<bool>,
     #[serde(default)]
     version: Option<Version>,
-    #[serde(default, alias = "commander")]
+    #[serde(default, alias = "commanders")]
     authors: LegionAuthors,
     /// Search `legion.toml` under `members` path
     #[serde(default)]
@@ -34,11 +37,13 @@ pub struct LegionWorkspace {
     /// Exclude module in `exclude` paths
     #[serde(default)]
     exclude: Vec<String>,
-
     #[serde(flatten)]
     dependencies: DependencySystem,
+    /// Workspace level scripts
+    ///
+    /// The running directory is the workspace directory
     #[serde(default)]
-    peers: DependencySystem,
+    scripts: BTreeMap<String, String>,
 }
 
 #[derive(Deserialize, Serialize, JsonSchema)]
@@ -50,18 +55,21 @@ pub struct LegionPackage {
     #[serde(default)]
     version: Option<Version>,
     /// The author of the package
-    #[serde(default, alias = "commander")]
+    #[serde(default, alias = "commanders")]
     authors: LegionAuthors,
     /// The description of the package
     description: Option<String>,
     /// The keywords of the package
-    keywords: Option<Vec<String>>,
+    keywords: Vec<String>,
     #[serde(flatten)]
     dependencies: DependencySystem,
-    #[serde(default)]
+    #[serde(default, alias = "friends")]
     peers: DependencySystem,
+    /// Package level scripts
+    ///
+    /// The running directory is the package directory
     #[serde(default)]
-    scripts: Vec<String>,
+    scripts: BTreeMap<String, String>,
     #[serde(default)]
     repository: String,
     #[serde(default)]
@@ -74,26 +82,6 @@ pub struct LegionPackage {
     documentation: String,
     #[serde(default)]
     readme: String,
-}
-
-#[derive(Default, Deserialize, Serialize, JsonSchema)]
-#[serde(rename_all = "kebab-case")]
-pub struct DependencySystem {
-    #[serde(default)]
-    dependencies: Vec<LegionDependency>,
-    #[serde(default)]
-    tests_dependencies: Vec<LegionDependency>,
-    #[serde(default)]
-    build_dependencies: Vec<LegionDependency>,
-}
-
-#[derive(Deserialize, Serialize, JsonSchema)]
-#[serde(rename_all = "kebab-case")]
-pub struct LegionDependency {
-    version: Version,
-    git: Option<String>,
-    branch: Option<String>,
-    hash: Option<String>,
 }
 
 impl LegionPackage {

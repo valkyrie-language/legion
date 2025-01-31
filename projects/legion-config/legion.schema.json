@@ -6,26 +6,36 @@
             "DependencySystem": {
                 "type": "object",
                 "properties": {
-                    "build-dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                    "benchmark-dependencies": {
+                        "description": "The dependencies for the bench\n\n - Override same name dependencies when benching",
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/LegionDependency"
-                        }
+                        },
+                        "default": {}
                     },
-                    "dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                    "build-dependencies": {
+                        "description": "The dependencies for the build\n\n - Override same name dependencies when building",
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/LegionDependency"
-                        }
+                        },
+                        "default": {}
+                    },
+                    "supports": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        },
+                        "default": {}
                     },
                     "tests-dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                        "description": "The dependencies for the test\n\n - Override same name dependencies when testing",
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/LegionDependency"
-                        }
+                        },
+                        "default": {}
                     }
                 }
             },
@@ -90,19 +100,21 @@
                         "$ref": "#/components/schemas/LegionAuthors",
                         "default": null
                     },
-                    "build-dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                    "benchmark-dependencies": {
+                        "description": "The dependencies for the bench\n\n - Override same name dependencies when benching",
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/LegionDependency"
-                        }
+                        },
+                        "default": {}
                     },
-                    "dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                    "build-dependencies": {
+                        "description": "The dependencies for the build\n\n - Override same name dependencies when building",
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/LegionDependency"
-                        }
+                        },
+                        "default": {}
                     },
                     "documentation": {
                         "type": "string",
@@ -114,14 +126,10 @@
                     },
                     "keywords": {
                         "description": "The keywords of the package",
-                        "type": [
-                            "array",
-                            "null"
-                        ],
+                        "type": "array",
                         "items": {
                             "type": "string"
-                        },
-                        "nullable": true
+                        }
                     },
                     "license": {
                         "type": "string",
@@ -134,9 +142,10 @@
                     "peers": {
                         "$ref": "#/components/schemas/DependencySystem",
                         "default": {
-                            "build-dependencies": [],
-                            "dependencies": [],
-                            "tests-dependencies": []
+                            "benchmark-dependencies": {},
+                            "build-dependencies": {},
+                            "supports": {},
+                            "tests-dependencies": {}
                         }
                     },
                     "private": {
@@ -156,18 +165,27 @@
                         "default": ""
                     },
                     "scripts": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                        "description": "Package level scripts\n\n The running directory is the package directory",
+                        "type": "object",
+                        "additionalProperties": {
                             "type": "string"
-                        }
+                        },
+                        "default": {}
+                    },
+                    "supports": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        },
+                        "default": {}
                     },
                     "tests-dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                        "description": "The dependencies for the test\n\n - Override same name dependencies when testing",
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/LegionDependency"
-                        }
+                        },
+                        "default": {}
                     },
                     "version": {
                         "description": "The version of the package",
@@ -184,7 +202,8 @@
                     }
                 },
                 "required": [
-                    "name"
+                    "name",
+                    "keywords"
                 ]
             },
             "LegionWorkspace": {
@@ -194,19 +213,21 @@
                         "$ref": "#/components/schemas/LegionAuthors",
                         "default": null
                     },
-                    "build-dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                    "benchmark-dependencies": {
+                        "description": "The dependencies for the bench\n\n - Override same name dependencies when benching",
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/LegionDependency"
-                        }
+                        },
+                        "default": {}
                     },
-                    "dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                    "build-dependencies": {
+                        "description": "The dependencies for the build\n\n - Override same name dependencies when building",
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/LegionDependency"
-                        }
+                        },
+                        "default": {}
                     },
                     "exclude": {
                         "description": "Exclude module in `exclude` paths",
@@ -232,14 +253,6 @@
                             "type": "string"
                         }
                     },
-                    "peers": {
-                        "$ref": "#/components/schemas/DependencySystem",
-                        "default": {
-                            "build-dependencies": [],
-                            "dependencies": [],
-                            "tests-dependencies": []
-                        }
-                    },
                     "private": {
                         "type": [
                             "boolean",
@@ -248,12 +261,28 @@
                         "default": null,
                         "nullable": true
                     },
-                    "tests-dependencies": {
-                        "type": "array",
-                        "default": [],
-                        "items": {
+                    "scripts": {
+                        "description": "Workspace level scripts\n\n The running directory is the workspace directory",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "default": {}
+                    },
+                    "supports": {
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/LegionDependency"
-                        }
+                        },
+                        "default": {}
+                    },
+                    "tests-dependencies": {
+                        "description": "The dependencies for the test\n\n - Override same name dependencies when testing",
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/LegionDependency"
+                        },
+                        "default": {}
                     },
                     "version": {
                         "anyOf": [
