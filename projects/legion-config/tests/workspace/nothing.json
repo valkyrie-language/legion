@@ -1,3 +1,5 @@
 {
-    "type": "Workspace"
+    "type": "package",
+    "authors": null,
+    "version": "0.0.0"
 }
