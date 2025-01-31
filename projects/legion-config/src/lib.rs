@@ -1,16 +1,29 @@
-pub use crate::{
-    config::ValorConfig,
-    dependency::{DependencyItem, DependencyKind, DependencyResolver},
-    package::ValorPackage,
-    types::{features::PackageFeature, name::PackageName},
-    workspace::ValorWorkspace,
-};
+use schemars::{JsonSchema, schema_for};
+use serde::{Deserialize, Serialize};
 
-mod config;
-mod dependency;
-mod package;
-mod types;
-mod workspace;
+#[derive(Deserialize, Serialize, JsonSchema)]
+#[serde(tag = "type")]
+pub enum LegionConfig {
+    Workspace(LegionWorkspace),
+    /// The package in workspace
+    Module(LegionPackage),
+    /// The standalone package
+    Package(LegionPackage),
+}
 
-#[macro_use]
-mod macros;
+#[derive(Deserialize, Serialize, JsonSchema)]
+pub struct LegionWorkspace {
+    version: Option<String>,
+    authors: Option<Vec<String>>,
+}
+#[derive(Deserialize, Serialize, JsonSchema)]
+pub struct LegionPackage {
+    version: Option<String>,
+    authors: Option<Vec<String>>,
+}
+
+#[test]
+fn test() {
+    let schema = schema_for!(LegionConfig);
+    println!("{}", serde_json::to_string_pretty(&schema).unwrap());
+}

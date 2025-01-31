@@ -1,0 +1,89 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "LegionConfig",
+    "oneOf": [
+        {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "Workspace"
+                }
+            },
+            "$ref": "#/$defs/LegionWorkspace",
+            "required": [
+                "type"
+            ]
+        },
+        {
+            "description": "The package in workspace",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "Module"
+                }
+            },
+            "$ref": "#/$defs/LegionPackage",
+            "required": [
+                "type"
+            ]
+        },
+        {
+            "description": "The standalone package",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "Package"
+                }
+            },
+            "$ref": "#/$defs/LegionPackage",
+            "required": [
+                "type"
+            ]
+        }
+    ],
+    "$defs": {
+        "LegionPackage": {
+            "type": "object",
+            "properties": {
+                "authors": {
+                    "type": [
+                        "array",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "version": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            }
+        },
+        "LegionWorkspace": {
+            "type": "object",
+            "properties": {
+                "authors": {
+                    "type": [
+                        "array",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "version": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            }
+        }
+    }
+}

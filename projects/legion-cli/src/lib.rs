@@ -15,7 +15,7 @@ pub struct LegionCLI {
 
 impl LegionCLI {
     pub async fn run(self) -> Result<(), LegionError> {
-        println!("{:#?}", self);
+        tracing::trace!("LegionCLI: {:#?}", self);
         let Self { commands, arguments } = self;
         match commands {
             Some(s) => s.run(&arguments).await?,
