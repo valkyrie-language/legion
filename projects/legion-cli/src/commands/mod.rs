@@ -1,7 +1,7 @@
 pub use self::{cmd_build::CommandBuild, cmd_encode::CommandEncode, cmd_run::CommandRun};
 use crate::{
+    commands::{cmd_decode::CommandDecode, cmd_polyfill::CommandPolyfill, cmd_update::CommandUpdate},
     LegionError,
-    commands::{cmd_decode::CommandDecode, cmd_polyfill::CommandPolyfill},
 };
 use clap::{Args, Subcommand};
 use std::path::PathBuf;
@@ -26,6 +26,8 @@ pub enum LegionCommands {
     /// decode `wasm` to `js`
     #[command(visible_alias = "shim")]
     Polyfill(CommandPolyfill),
+    /// Update the legion project
+    Update(CommandUpdate),
 }
 
 #[derive(Debug, Args)]
@@ -47,6 +49,7 @@ impl LegionCommands {
             Self::Encode(cmd) => cmd.run(arguments).await,
             Self::Decode(cmd) => cmd.run(arguments).await,
             Self::Polyfill(cmd) => cmd.run(arguments).await,
+            Self::Update(cmd) => cmd.run(arguments).await,
         }
     }
 }

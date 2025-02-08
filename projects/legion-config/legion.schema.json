@@ -247,6 +247,13 @@
                             "type": "string"
                         }
                     },
+                    "keywords": {
+                        "description": "The keywords shared in all modules",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
                     "members": {
                         "description": "Search `legion.toml` under `members` path",
                         "type": "array",
@@ -300,7 +307,10 @@
                         "default": null,
                         "nullable": true
                     }
-                }
+                },
+                "required": [
+                    "keywords"
+                ]
             },
             "SemVer": {
                 "type": "string",
