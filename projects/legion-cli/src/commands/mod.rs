@@ -11,6 +11,7 @@ mod cmd_decode;
 mod cmd_encode;
 mod cmd_polyfill;
 mod cmd_run;
+mod cmd_update;
 
 #[derive(Debug, Subcommand)]
 pub enum LegionCommands {
