@@ -50,9 +50,9 @@ impl LegionPackage {
         // in most cases, there is only one author
         let mut authors = Vec::with_capacity(1);
         if let Some(s) = ws {
-            s.authors.send_author(&mut authors)
+            s.commanders.send_author(&mut authors)
         }
-        self.authors.send_author(&mut authors);
+        self.commanders.send_author(&mut authors);
         authors
     }
 }
